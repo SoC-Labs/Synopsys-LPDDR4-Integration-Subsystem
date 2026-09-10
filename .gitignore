@@ -1,3 +1,5 @@
 sim
 verif/models
 sw/build
+sw/libs/phyinit
+sw/libs/phyinit.c

@@ -1,0 +1,11 @@
++incdir+${LPDDR4_PROJECT_DIR}/verif/models/apb_driver/src/verilog/vcs
++incdir+${LPDDR4_PROJECT_DIR}/verif/models/apb_driver/include/verilog
++incdir+${LPDDR4_PROJECT_DIR}/verif/models/axi_driver/src/sverilog/vcs
++incdir+${LPDDR4_PROJECT_DIR}/verif/models/axi_driver/include/sverilog
++incdir+${LPDDR4_PROJECT_DIR}/verif/models/axi_driver/examples/sverilog/amba_svt/tb_axi_svt_uvm_basic_sys/env
+${LPDDR4_PROJECT_DIR}/verif/axi_tb.sv
+${LPDDR4_PROJECT_DIR}/verif/dpi_axi.sv
+${LPDDR4_PROJECT_DIR}/verif/axi4_svt_adapter.sv
+${LPDDR4_PROJECT_DIR}/verif/ctrl/clk_rst_ctrl.v
+
+-f ${LPDDR4_PROJECT_DIR}/flist/interfaces.vc

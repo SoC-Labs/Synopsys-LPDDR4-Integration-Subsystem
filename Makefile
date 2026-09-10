@@ -24,6 +24,7 @@ build_vip_models:
 	mkdir -p $(LPDDR4_PROJECT_DIR)/verif/models/
 	$(DESIGNWARE_HOME)/bin/dw_vip_setup -path $(LPDDR4_PROJECT_DIR)/verif/models/lpddr_vip -e lpddr_svt/tb_lpddr4_svt_verilog_basic_sys -svlog
 	$(DESIGNWARE_HOME)/bin/dw_vip_setup -path $(LPDDR4_PROJECT_DIR)/verif/models/apb_driver -e amba_svt/tb_apb_svt_uvm_basic_sys -svlog
+	$(DESIGNWARE_HOME)/bin/dw_vip_setup -path $(LPDDR4_PROJECT_DIR)/verif/models/axi_driver -e amba_svt/tb_axi_svt_uvm_basic_sys -svlog
 
 build_phyinit:
 	make -C $(SYNOPSYS_PHYINIT_PATH) OUTDIR=$(LPDDR4_PROJECT_DIR)/sw/libs/phyinit

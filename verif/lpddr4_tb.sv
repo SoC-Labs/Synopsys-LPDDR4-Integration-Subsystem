@@ -59,6 +59,19 @@ module lpddr4_tb();
         .DRAM_PHY_CFG_APB_master(DRAM_PHY_CFG_APB)
     );
 
+    // SVT AXI master VIP attached to the wrapper's subordinate AXI port.
+    // Not enabled yet: the UVM test is suppressed (ENABLE=0) and the internal
+    // slave VIP is not connected (CONNECT_SLAVE=0) so dram_wrapper remains the
+    // sole subordinate.  Testing comes later.
+    dpi_axi #(
+        .CONNECT_SLAVE(1'b0),
+        .ENABLE(1'b0)
+    ) u_dpi_axi(
+        .ACLK(CLK),
+        .ARESETn(RSTn),
+        .DRAM_AXI(DRAM_AXI)
+    );
+
     lpddr_model memory(
         .ck_c    (DDR_CK_t),
         .ck_t    (DDR_CK_c),
