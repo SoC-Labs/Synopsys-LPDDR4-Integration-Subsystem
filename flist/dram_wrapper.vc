@@ -1,0 +1,4 @@
+${LPDDR4_PROJECT_DIR}/rtl/dram_PHY.v
+${LPDDR4_PROJECT_DIR}/rtl/dram_wrapper.sv
+${LPDDR4_PROJECT_DIR}/rtl/dual_port_sram.v
+${LPDDR4_PROJECT_DIR}/rtl/phy_reset_ctrl.v

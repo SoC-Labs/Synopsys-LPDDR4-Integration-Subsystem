@@ -1,0 +1,97 @@
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/ctb/Latest/testbench/rtl/dwc_ddrphy_pmu_dccm_ram.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/ctb/Latest/testbench/rtl/dwc_ddrphy_pmu_iccm_ram.v
+
++incdir+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphydbyte_top.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_bdl.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_cdc_syn_stdlib.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_clk_rx.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_cmdfifo2.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_cmdfifo5.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_data_fifo_rx.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_dftclkmux.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_dlane_txfifo.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_dll_rsm.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_dll_rxen_training.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_dlldrv.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_dqs_txfifo.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_dqsenreplica.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_drv_connect_be27.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_drv_drvpd.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_drv_drvpu.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_drvbe27.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_drvfe.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_drvfedqs.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_drvlsdw.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_drvx.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_lcdl_rxclk.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_lcdl_rxen.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_lcdl_tx.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_lcdl.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_mtestmux.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_outdrv_be27.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_phfifo.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_phfifo1b.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_phfifo7b.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_rcvr_analogtestmux.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_rtl_syn_stdlib.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_rxdq_dqrcvrslice.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_rxdq_ibias.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_rxdq_vbias.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_rxdq_vreftop.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_rxdq.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_rxdqs.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_rxdqsamp.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_srlatch_sdom.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_stdlib_comparator.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_stdlib_ishmttrig.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_txrxdq.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_txrxdqs.v
+
+
+
++incdir+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/acx4_ew/Latest/rtl/
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/acx4_ew/Latest/rtl/dwc_ddrphyacx4_top.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/acx4_ew/Latest/rtl/dwc_ddrphy_prbs7chkx1.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/acx4_ew/Latest/rtl/dwc_ddrphy_atxbit.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/acx4_ew/Latest/rtl/dwc_ddrphy_txrxca.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/acx4_ew/Latest/rtl/dwc_ddrphy_drvlsaw.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/acx4_ew/Latest/rtl/dwc_ddrphy_cmdfifo4.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/acx4_ew/Latest/rtl/dwc_ddrphy_datclkdrv.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/acx4_ew/Latest/rtl/dwc_ddrphy_rxac.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/acx4_ew/Latest/rtl/dwc_ddrphy_rxac_dqsamp.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/acx4_ew/Latest/rtl/dwc_ddrphy_drvbe20.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/acx4_ew/Latest/rtl/dwc_ddrphy_drvfea.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/acx4_ew/Latest/rtl/dwc_ddrphy_outdrv.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/acx4_ew/Latest/rtl/dwc_ddrphy_drv_connect.v
+
++incdir+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/master/Latest/rtl/
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/master/Latest/rtl/dwc_ddrphymaster_top.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/master/Latest/rtl/dwc_ddrphy_pll.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/master/Latest/rtl/dwc_ddrphy_pllwrap.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/master/Latest/rtl/dwc_ddrphy_por.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/master/Latest/rtl/dwc_ddrphy_vrefglobal_amux128x1.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/master/Latest/rtl/dwc_ddrphy_vrefglobal_resladd.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/master/Latest/rtl/dwc_ddrphy_vrefglobal.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/master/Latest/rtl/dwc_ddrphy_cmpmeas.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/master/Latest/rtl/dwc_ddrphy_clk_master.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/master/Latest/rtl/dwc_ddrphy_cmpana.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/master/Latest/rtl/dwc_ddrphy_stdlib_switch_vref.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/master/Latest/rtl/dwc_ddrphy_cmpana_cmpr_pasa.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/master/Latest/rtl/dwc_ddrphy_cmpana_rcfilt.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/master/Latest/rtl/dwc_ddrphy_cmpana_dac_rladd.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/master/Latest/rtl/dwc_ddrphy_cmpana_dac.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/master/Latest/rtl/dwc_ddrphy_cmpana_calmux.v
+
+
+
+// +incdir+${CTB_VIP_HOME}/include/sverilog 
+// +incdir+${CTB_VIP_HOME}/src/sverilog/vcs 
+// 
+// +incdir+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/ctb/Latest/testbench/vc/lpddr4/env
+// +incdir+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/ctb/Latest/testbench/vc/lpddr4/src
+// +incdir+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/ctb/Latest/testbench/vc/lpddr4/src/lpddr
+// 
+// ${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/ctb/Latest/testbench/vc/lpddr4/src/uvmvlog_pkg.sv 
+// ${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/ctb/Latest/testbench/vc/lpddr4/env/svt_vip_models.sv 
+// ${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/ctb/Latest/testbench/vc/lpddr4/src/lpddr/lpddr4_1ch_dram_uvmvlog.sv

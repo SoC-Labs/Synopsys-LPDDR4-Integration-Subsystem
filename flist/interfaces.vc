@@ -1,0 +1,4 @@
+${LPDDR4_PROJECT_DIR}/rtl/interfaces/apb3_if.sv
+${LPDDR4_PROJECT_DIR}/rtl/interfaces/apb4_if.sv
+${LPDDR4_PROJECT_DIR}/rtl/interfaces/axi4_if.sv
+${LPDDR4_PROJECT_DIR}/rtl/interfaces/qchannel_if.sv
