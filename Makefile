@@ -12,7 +12,7 @@ DEFINES_VC += +define+SVT_LPDDR_CA_WIDTH=6 +define+SVT_LPDDR_MAX_DQS_WIDTH=2 +de
 SYNOPSYS_LPDDR4_UMCTL2_DIR ?= /research/synopsys/lpddr4/megaSoC_lpddr4/megaSoC_lpddr4/
 SYNOPSYS_LPDDR4_multiPHY_DIR ?= /research/synopsys/lpddr4_m_phy_megasoc
 SYNOPSYS_LPDDR4_multiPHY_LIB_DIR ?= /research/synopsys/LPDDR4-m-PHY-V2_TSMC_16FFC/synopsys/dwc_lpddr4_multiphy_v2_tsmc16ffc18/Latest
-
+SYNOPSYS_PHYINIT_PATH?=/research/synopsys/LPDDR4-m-PHY-V2_TSMC_16FFC/synopsys/dwc_lpddr4_multiphy_v2_tsmc16ffc18/Latest/phyinit/Latest/software/lpddr4
 
 # Make variables visible to target shells
 export DEFINES_VC
@@ -25,6 +25,8 @@ build_vip_models:
 	$(DESIGNWARE_HOME)/bin/dw_vip_setup -path $(LPDDR4_PROJECT_DIR)/verif/models/lpddr_vip -e lpddr_svt/tb_lpddr4_svt_verilog_basic_sys -svlog
 	$(DESIGNWARE_HOME)/bin/dw_vip_setup -path $(LPDDR4_PROJECT_DIR)/verif/models/apb_driver -e amba_svt/tb_apb_svt_uvm_basic_sys -svlog
 
+build_phyinit:
+	make -C $(SYNOPSYS_PHYINIT_PATH) OUTDIR=$(LPDDR4_PROJECT_DIR)/sw/libs/phyinit
 
 
 first_time_setup: build_vip_models

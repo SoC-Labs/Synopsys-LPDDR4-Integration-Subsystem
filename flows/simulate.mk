@@ -9,6 +9,11 @@ TBENCH_VC = $(LPDDR4_PROJECT_DIR)/flist/tb.vc
 FW_BUILD_DIR=$(LPDDR4_PROJECT_DIR)/sw/build
 FW_TEST_DIR=$(LPDDR4_PROJECT_DIR)/sw/tests
 
+PHYINIT_C=$(LPDDR4_PROJECT_DIR)/sw/libs/phyinit.c
+PHYINIT_SO=$(LPDDR4_PROJECT_DIR)/sw/build/phyinit.so
+PHYINIT_SO_NO=$(LPDDR4_PROJECT_DIR)/sw/build/phyinit
+
+
 TEST_SO=$(FW_BUILD_DIR)/$(TESTNAME).so
 TEST_SO_NO=$(FW_BUILD_DIR)/$(TESTNAME)
 
@@ -41,7 +46,7 @@ run_vcs: $(SIM_DIR) $(TEST_SO)
 	@if [ ! -d $(SIM_DIR)/logs ] ; then \
 	  mkdir -p $(SIM_DIR)/logs; \
 	fi
-	cd $(SIM_DIR); $(SIM_BUILD_DIR)/simv $(VCS_SIM_OPTION) -sv_lib $(TEST_SO_NO)  < quit.do | tee logs/run_$(TESTNAME).log ;
+	cd $(SIM_DIR); $(SIM_BUILD_DIR)/simv $(VCS_SIM_OPTION) -sv_lib $(TEST_SO_NO) -sv_lib $(PHYINIT_SO_NO) < quit.do | tee logs/run_$(TESTNAME).log ;
 
 
 sim_vcs: $(SIM_DIR) $(TEST_SO)
@@ -50,11 +55,20 @@ sim_vcs: $(SIM_DIR) $(TEST_SO)
 	@if [ ! -d $(SIM_DIR)/logs ] ; then \
 	  mkdir -p $(SIM_DIR)/logs; \
 	fi
-	cd $(SIM_DIR); $(SIM_BUILD_DIR)/simv $(VCS_SIM_OPTION) -gui -sv_lib $(TEST_SO_NO) &
+	cd $(SIM_DIR); $(SIM_BUILD_DIR)/simv $(VCS_SIM_OPTION) -gui -sv_lib $(TEST_SO_NO) -sv_lib $(PHYINIT_SO_NO) &
 
 
-$(TEST_SO): $(FW_TEST_DIR)/$(TESTNAME).c $(FW_BUILD_DIR)
-	cc -fPIC -I $(SIM_BUILD_DIR) -I $(FW_TEST_DIR)/../libs -I $(VCS_HOME)/include  -shared -o $@ $(FW_TEST_DIR)/$(TESTNAME).c
+$(TEST_SO): $(FW_TEST_DIR)/$(TESTNAME).c $(FW_BUILD_DIR) $(PHYINIT_SO)
+	cc -fPIC -I $(SIM_BUILD_DIR) -I $(FW_TEST_DIR)/../libs -I $(VCS_HOME)/include -I $(FW_TEST_DIR)../build  -shared -o $@ $(FW_TEST_DIR)/$(TESTNAME).c
+
+$(PHYINIT_SO): $(PHYINIT_C)
+	cc -fPIC -I $(SIM_BUILD_DIR) -I $(FW_TEST_DIR)/../libs -I $(VCS_HOME)/include  -shared -o $@ $(PHYINIT_C)
+
+$(PHYINIT_C):
+	cat $(LPDDR4_PROJECT_DIR)/sw/libs/phyinit_template.c > $(LPDDR4_PROJECT_DIR)/sw/libs/phyinit.c
+	cat $(LPDDR4_PROJECT_DIR)/sw/libs/phyinit/dwc_ddrphy_phyinit_out_lpddr4_devinit_skiptrain.txt >> $(LPDDR4_PROJECT_DIR)/sw/libs/phyinit.c
+	echo } >> $(LPDDR4_PROJECT_DIR)/sw/libs/phyinit.c
+
 
 # Recipe to create directories
 $(SIM_BUILD_DIR) $(SIM_BASE_DIR) $(SIM_DIR):

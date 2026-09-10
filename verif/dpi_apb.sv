@@ -50,6 +50,15 @@ class dpi_apb_test extends uvm_test;
     cfg.slave_cfg.pdata_width  = svt_apb_system_configuration::PDATA_WIDTH_16;
     cfg.slave_cfg.is_active    = 1;
     cfg.slave_cfg.slave_cfg[0].is_active = 0;
+    cfg.slave_cfg.slave_addr_allocation_enable = 0;
+    cfg.slave_cfg.slave_addr_ranges = new[cfg.slave_cfg.num_slaves];
+    foreach (cfg.slave_cfg.slave_addr_ranges[i]) begin
+      cfg.slave_cfg.slave_addr_ranges[i] = new($sformatf("slave_addr_ranges['d%0d]", i));
+      cfg.slave_cfg.slave_addr_ranges[i].start_addr = 32'h0000_0000;
+      cfg.slave_cfg.slave_addr_ranges[i].end_addr   = 32'hFFFF_FFFF;
+      cfg.slave_cfg.slave_addr_ranges[i].slave_id   = i;
+    end
+    $display("%0t [DPI_APB] slave_cfg ranges size=%0d, num_slaves=%0d", $time, cfg.slave_cfg.slave_addr_ranges.size(), cfg.slave_cfg.num_slaves);
 
     uvm_config_db#(svt_apb_system_configuration)::set(this, "apb3_env", "cfg", cfg.master_cfg);
     apb3_env = svt_apb_system_env::type_id::create("apb3_env", this);
@@ -105,6 +114,9 @@ class dpi_apb_seq extends svt_apb_master_base_sequence;
     svt_apb_master_transaction rsp;
 
     super.body();
+    if (!is_write && addr == 32'h0004_017c)
+      $display("%0t [DPI_APB] seq cfg ranges size=%0d slave_id=%0d", $time,
+               cfg.slave_addr_ranges.size(), cfg.get_slave_id(addr, 1));
     txn = svt_apb_master_transaction::type_id::create("txn");
     txn.cfg       = cfg;
     txn.xact_type = is_write ? svt_apb_transaction::WRITE : svt_apb_transaction::READ;
