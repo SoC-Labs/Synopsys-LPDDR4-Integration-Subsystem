@@ -27,7 +27,18 @@ build_vip_models:
 	$(DESIGNWARE_HOME)/bin/dw_vip_setup -path $(LPDDR4_PROJECT_DIR)/verif/models/axi_driver -e amba_svt/tb_axi_svt_uvm_basic_sys -svlog
 
 build_phyinit:
-	make -C $(SYNOPSYS_PHYINIT_PATH) OUTDIR=$(LPDDR4_PROJECT_DIR)/sw/libs/phyinit
+	make -C $(SYNOPSYS_PHYINIT_PATH) OUTDIR=$(LPDDR4_PROJECT_DIR)/sw/libs/phyinit CUSTDIR=$(LPDDR4_PROJECT_DIR)/sw/libs/userCustom
 
+setup_phyinit_dev:
+	cp -r $(SYNOPSYS_PHYINIT_PATH)/userCustom $(LPDDR4_PROJECT_DIR)/sw/libs
+	cp -r $(SYNOPSYS_PHYINIT_PATH)/doc $(LPDDR4_PROJECT_DIR)/sw/libs
 
-first_time_setup: build_vip_models
+commit_phyinit_changes:
+	cp -r $(LPDDR4_PROJECT_DIR)/sw/libs/userCustom $(SYNOPSYS_PHYINIT_PATH)/
+
+first_time_setup: build_vip_models setup_phyinit_dev
+
+clean_phyinit:
+	rm $(LPDDR4_PROJECT_DIR)/sw/build/phyinit.so
+	rm -rf $(LPDDR4_PROJECT_DIR)/sw/libs/phyinit
+	rm $(LPDDR4_PROJECT_DIR)/sw/libs/phyinit.c

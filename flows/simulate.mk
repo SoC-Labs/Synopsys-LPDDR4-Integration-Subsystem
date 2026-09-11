@@ -91,13 +91,10 @@ $(TEST_SO): $(FW_TEST_DIR)/$(TESTNAME).c $(FW_BUILD_DIR) $(PHYINIT_SO)
 $(PHYINIT_SO): $(PHYINIT_C)
 	cc -fPIC -I $(SIM_BUILD_DIR) -I $(FW_TEST_DIR)/../libs -I $(VCS_HOME)/include  -shared -o $@ $(PHYINIT_C)
 
-$(PHYINIT_C): $(LPDDR4_PROJECT_DIR)/sw/libs/phyinit/dwc_ddrphy_phyinit_out_lpddr4_devinit_skiptrain.txt
+$(PHYINIT_C): build_phyinit
 	cat $(LPDDR4_PROJECT_DIR)/sw/libs/phyinit_template.c > $(LPDDR4_PROJECT_DIR)/sw/libs/phyinit.c
 	cat $(LPDDR4_PROJECT_DIR)/sw/libs/phyinit/dwc_ddrphy_phyinit_out_lpddr4_devinit_skiptrain.txt >> $(LPDDR4_PROJECT_DIR)/sw/libs/phyinit.c
 	echo } >> $(LPDDR4_PROJECT_DIR)/sw/libs/phyinit.c
-
-$(LPDDR4_PROJECT_DIR)/sw/libs/phyinit/dwc_ddrphy_phyinit_out_lpddr4_devinit_skiptrain.txt:
-	make -C $(SYNOPSYS_PHYINIT_PATH) OUTDIR=$(LPDDR4_PROJECT_DIR)/sw/libs/phyinit
 
 # Recipe to create directories
 $(SIM_BUILD_DIR) $(SIM_BASE_DIR) $(SIM_DIR) $(AXI_SIM_DIR):

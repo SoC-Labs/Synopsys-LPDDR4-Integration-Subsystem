@@ -3,3 +3,5 @@ verif/models
 sw/build
 sw/libs/phyinit
 sw/libs/phyinit.c
+sw/libs/userCustom
+sw/libs/doc
