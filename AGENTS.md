@@ -25,7 +25,7 @@ source set_env.sh              # Set LPDDR4_PROJECT_DIR (required before any mak
 make first_time_setup          # Build VIP models (required once, or if verif/models/ is missing)
 make build_phyinit             # Generate sw/libs/phyinit.c from template + output files
 make compile_vcs               # Compile RTL with VCS (output: sim/build/simv)
-make run_vcs TESTNAME=hello    # Run simulation headless (default: test_apb_access)
+make run_vcs TESTNAME=hello    # Run simulation headless (default: dram_tests)
 make sim_vcs TESTNAME=hello    # Run simulation with Verdi GUI
 ```
 
@@ -40,7 +40,9 @@ cc -fPIC -I sim/build -I sw/libs -I $VCS_HOME/include -shared -o sw/build/hello.
 - `verif/lpddr4_tb.sv` — Top testbench: clock/reset, DDR model, APB driver, DUT instantiation
 - `verif/dpi_apb.sv` — UVM APB VIP environment + DPI-C bridge: exposes `sv_apb3_read/write` and `sv_apb4_read/write` to C firmware via DPI-C scope (`lpddr4_tb.u_dpi_apb`)
 - `verif/ddr_apb_driver.sv` — Standalone APB4 driver module (separate from the DPI-C bridge)
-- `flist/tb.vc` — Master file list for VCS compilation (references IP file lists via `-f`; requires `LPDDR4_PROJECT_DIR` set)
+- `verif/dpi_axi.sv` — UVM AXI VIP environment + DPI-C bridge (`sv_axi_write/read`)
+- `verif/axi4_svt_adapter.sv` — SVT AXI VIP ↔ repo `axi4` bus adapter
+- `flist/tb.vc` / `flist/axi_tb.vc` — VCS file lists
 - `flist/IP/` — File lists for Synopsys IP blocks (uMCTL2, LPDDR4PHY, CMSDK)
 - `sw/tests/*.c` — DPI-C test firmware (see Firmware Entry Point below)
 - `sw/libs/apb_access.h` — C API for APB3/APB4 read/write from firmware tests
