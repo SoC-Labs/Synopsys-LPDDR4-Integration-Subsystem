@@ -130,19 +130,21 @@ task initialize_inst;
         // To update the timing configuration
 
     memory.get_data_prop(is_valid, `SVT_CMD_NULL_HANDLE, "timing_cfg", timing_cfg_handle, 0);
-    //`GET_DATA_PROP_W_CHECK("memory", `SVT_CMD_NULL_HANDLE, "timing_cfg", timing_cfg_handle, 0, 1, `FATAL_SEV)
     $display("  TB @%0d %m - vip_get_data_prop() returned 'timing_cfg_handle' = %0d for mem_agent instance", $time, timing_cfg_handle);
 
     // Assign the desired values to the top level timing configuration properties
-    memory.set_data_prop(is_valid, timing_cfg_handle, "clock_rate", SVT_MEM_667MHz, 0);
-    memory.set_data_prop(is_valid, timing_cfg_handle, "tinit0_ms", $realtobits(0.001), 0);
-    memory.set_data_prop(is_valid, timing_cfg_handle, "tinit1_ns", $realtobits(10.0), 0);
-    memory.set_data_prop(is_valid, timing_cfg_handle, "tinit2_ck", 'd2, 0);
-    memory.set_data_prop(is_valid, timing_cfg_handle, "tinit3_us", $realtobits(2.0), 0);
-    memory.set_data_prop(is_valid, timing_cfg_handle, "tinit4_us", $realtobits(1.0), 0);
-    memory.set_data_prop(is_valid, timing_cfg_handle, "tinit5_us", $realtobits(10.0), 0);
-    memory.set_data_prop(is_valid, timing_cfg_handle, "scaled_timing_flag", 1, 0);
-    memory.set_data_prop(is_valid, timing_cfg_handle, "tckb_ns", $realtobits(18.000000), 0);
+    memory.set_data_prop(is_valid, timing_cfg_handle, "clock_rate", SVT_MEM_800MHz, 0);
+    memory.set_data_prop(is_valid, timing_cfg_handle, "actual_clock_rate", 790, 0);
+    memory.set_data_prop(is_valid, timing_cfg_handle, "tinit1_us", $realtobits(10.0), 0);
+    memory.set_data_prop(is_valid, timing_cfg_handle, "tinit3_ms", $realtobits(0.001),0);
+
+   // memory.set_data_prop(is_valid, timing_cfg_handle, "tinit0_ms", $realtobits(0.001), 0);
+   // memory.set_data_prop(is_valid, timing_cfg_handle, "tinit2_ck", 'd2, 0);
+   // memory.set_data_prop(is_valid, timing_cfg_handle, "tinit3_us", $realtobits(2.0), 0);
+   // memory.set_data_prop(is_valid, timing_cfg_handle, "tinit4_us", $realtobits(1.0), 0);
+   // memory.set_data_prop(is_valid, timing_cfg_handle, "tinit5_us", $realtobits(10.0), 0);
+   // memory.set_data_prop(is_valid, timing_cfg_handle, "scaled_timing_flag", 1, 0);
+   // memory.set_data_prop(is_valid, timing_cfg_handle, "tckb_ns", $realtobits(18.000000), 0);
 
  //   // This method will disable the specified check
  //   `ENABLE_CHECK("memory","err_check.common_err_check","tckb_during_initialization_for_mrw_mrr_cmd_check",0,`FATAL_SEV)
@@ -155,7 +157,10 @@ task initialize_inst;
 
     $display("  **** Writing memory configuration  ****");
     memory.get_data_prop(is_valid, `SVT_CMD_NULL_HANDLE, "cfg", cfg_handle, 0);
-    //`SET_DATA_PROP_W_CHECK("memory", cfg_handle, "bypass_initialization", 1'b1 , 0, 1, `FATAL_SEV)
+    memory.set_data_prop(is_valid, cfg_handle, "bypass_initialization", 1'b0 , 0);
+    memory.apply_data(is_valid, cfg_handle);
+
+    memory.get_data_prop(is_valid, `SVT_CMD_NULL_HANDLE, "cfg", cfg_handle, 0);
     memory.display_data(is_valid, cfg_handle, "Final LPDDR memory Configuraton: ");
   end
 endtask : initialize_inst

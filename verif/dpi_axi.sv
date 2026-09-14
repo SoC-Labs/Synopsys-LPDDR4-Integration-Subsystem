@@ -24,6 +24,7 @@ class dpi_axi_test extends uvm_test;
 
   static svt_axi_master_sequencer sm;
   static bit rx_ready;
+  bit connect_slave;
 
   function new(string name = "dpi_axi_test", uvm_component parent = null);
     super.new(name, parent);
@@ -31,6 +32,9 @@ class dpi_axi_test extends uvm_test;
 
   virtual function void build_phase(uvm_phase phase);
     super.build_phase(phase);
+
+    if (!uvm_config_db#(bit)::get(this, "", "connect_slave", connect_slave))
+      connect_slave = 1'b0;
 
     cfg = svt_axi_system_configuration::type_id::create("cfg");
     cfg.num_masters          = 1;
@@ -44,8 +48,9 @@ class dpi_axi_test extends uvm_test;
     cfg.slave_cfg[0].data_width  = 64;
     cfg.slave_cfg[0].id_width    = 8;
     cfg.slave_cfg[0].axi_interface_type  = svt_axi_port_configuration::AXI4;
+    cfg.slave_cfg[0].is_active   = connect_slave;
 
-    cfg.set_addr_range(0, 'h0, `SVT_AXI_MAX_ADDR_WIDTH'(64'h1_FFFF_FFFF));
+    cfg.set_addr_range(0, 'h0, 34'h0_7FFF_FFFF);
 
     $display("%0t [DPI_AXI] num_masters=%0d num_slaves=%0d data_width=%0d id_width=%0d",
              $time, cfg.num_masters, cfg.num_slaves,
@@ -147,7 +152,8 @@ endclass
 module dpi_axi #(
     parameter int  AXI_TIMEOUT_CYCLES = 1000000,
     parameter bit  CONNECT_SLAVE      = 1'b1,
-    parameter bit  ENABLE             = 1'b1
+    parameter bit  ENABLE             = 1'b1,
+    parameter bit  RUN_TEST           = 1'b1
 )(
     input wire ACLK,
     input wire ARESETn,
@@ -158,6 +164,7 @@ module dpi_axi #(
     axi4_svt_adapter #(.CONNECT_SLAVE(CONNECT_SLAVE)) u_axi4_adapter(axi_if, DRAM_AXI);
 
     assign axi_if.common_aclk          = ACLK;
+    assign axi_if.master_if[0].aclk    = ACLK;
     assign axi_if.master_if[0].aresetn = ARESETn;
     assign axi_if.slave_if[0].aresetn  = ARESETn;
 
@@ -216,7 +223,8 @@ module dpi_axi #(
     endtask
 
     initial begin
-        if (ENABLE) begin
+        if (ENABLE && RUN_TEST) begin
+            uvm_config_db#(bit)::set(uvm_root::get(), "uvm_test_top", "connect_slave", CONNECT_SLAVE);
             uvm_config_db#(svt_axi_vif)::set(uvm_root::get(), "uvm_test_top.axi_system_env", "vif", axi_if);
             run_test("dpi_axi_test");
         end

@@ -21,8 +21,8 @@ TEST_SO_NO=$(FW_BUILD_DIR)/$(TESTNAME)
 # VCS options
 COVERAGE ?= 0
 LINT ?= 0
-VCS_OPTIONS    = +ddr_squashz_to_0 +vcs+lic+wait +v2k -sverilog -override_timescale=1ns/100fs -debug +plusarg_save -debug_access+pp+dmptf+thread -debug_region=cell+encrypt -notice 
-VCS_SIM_OPTION = +ddr_squashz_to_0 +vcs+lic+wait +vcs+flush+log -assert nopostproc
+VCS_OPTIONS    =  +vcs+lic+wait +v2k -sverilog -timescale=1ns/100fs -debug +plusarg_save -debug_access+pp+dmptf+thread -debug_region=cell+encrypt -notice 
+VCS_SIM_OPTION =  +vcs+lic+wait +vcs+flush+log -assert nopostproc
 VCS_VC_OPTIONS = -f $(TBENCH_VC) 
 VCS_OPTIONS   += -ntb_opts uvm -full64 -sverilog $(DESIGNWARE_HOME)/vip/svt/common/latest/C/lib/amd64/libmemserver.so
 
@@ -93,7 +93,7 @@ $(PHYINIT_SO): $(PHYINIT_C)
 
 $(PHYINIT_C): build_phyinit
 	cat $(LPDDR4_PROJECT_DIR)/sw/libs/phyinit_template.c > $(LPDDR4_PROJECT_DIR)/sw/libs/phyinit.c
-	cat $(LPDDR4_PROJECT_DIR)/sw/libs/phyinit/dwc_ddrphy_phyinit_out_lpddr4_devinit_skiptrain.txt >> $(LPDDR4_PROJECT_DIR)/sw/libs/phyinit.c
+	cat $(LPDDR4_PROJECT_DIR)/sw/libs/phyinit/dwc_ddrphy_phyinit_out_lpddr4_train1d.txt >> $(LPDDR4_PROJECT_DIR)/sw/libs/phyinit.c
 	echo } >> $(LPDDR4_PROJECT_DIR)/sw/libs/phyinit.c
 
 # Recipe to create directories

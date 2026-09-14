@@ -33,6 +33,9 @@ void dwc_ddrphy_phyinit_userCustom_overrideUserInput (){
 }
 
 void dwc_ddrphy_phyinit_userCustom_A_bringupPower (){
+	// Need to wait 200us for power startup
+	// But let's set tINIT1 to lower value in TB for now.
+
   	return;
 }
 

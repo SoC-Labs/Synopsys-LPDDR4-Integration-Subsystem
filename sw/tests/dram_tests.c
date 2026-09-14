@@ -2,11 +2,12 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "apb_access.h"
+#include "axi_access.h"
 
 extern void endSim();
 extern void phyinit();
 
-int simulation=1;
+int no_training=0;
 
 void apb3_bit_set(uint32_t addr, uint32_t bit){
     uint32_t reg;
@@ -29,6 +30,13 @@ void something() {
 
     printf("** Start DDR CTRL Init **\n");
     uint32_t tmp;
+
+    // De-assert reset signal core_ddrc_rstn
+    apb3_write(0x6008,0x1); //DDR_RESET_CTRL->CORE_RSTn=1;
+
+    // Set MSTR.LPDDR4 high
+    apb3_bit_set(0x0,5);
+
     // Program DWC_ddr_umctl2 registers
         //Note 1: When running training with the PHY. The following controller registers must be programmed to
         //these values at this stage:
@@ -38,7 +46,8 @@ void something() {
         //  INIT0.skip_dram_init=0
         //  (that is, SDRAM INIT through the controller)
         //  PWRCTL.selfref_sw=0
-    if(simulation){
+
+    if(no_training){
         apb3_bit_clear(0xd0,30);
         apb3_bit_clear(0xd0,31);
         apb3_bit_clear(0x30, 5);
@@ -61,6 +70,13 @@ void something() {
     //   SWSTAT.sw_done_ack after setting SWCTL.sw_done to ‘0'
     apb3_bit_clear(0x320, 0);
 
+    apb3_read(0x3e0,&tmp); // Read OCCAPCCFG
+    if(tmp&1!=0){
+        apb3_read(0x324,&tmp);
+        while(tmp==0){apb3_read(0x324,&tmp);}
+        printf("SWSTAT.B.sw_done_ack != 0\n");
+    }    
+
     // Set DFIMISC.dfi_init_complete_en to ‘0' (mask transition in phy_dfi_init_complete)
     apb3_bit_clear(0x1b0, 0);
     
@@ -77,36 +93,34 @@ void something() {
     printf("** Start DDR PHY Init **\n");
     phyinit();
     printf("** Finish DDR PHY Init **\n");
-    // De-assert reset signal core_ddrc_rstn
-    apb3_write(0x6008,0x1); //DDR_RESET_CTRL->CORE_RSTn=1;
 
     // 9 Poll the PUB register
     //  APBONLY.UctShadowRegs[0]=1’b0 
-    apb4_read(0x340010,&tmp);
-    while((tmp&0x1)!=0){apb4_read(0x340010,&tmp);}
-    // 10 Read the PUB Register
-    //    APBONLY.UctWriteOnlyShadow for training status
-    apb4_read(0x3400C8,&tmp);
-    printf("APBONLY.UctWriteOnlyShadow: 0x%08x\n",tmp);
-
-    // Write the PUB Register
-    //  APBONLY.DctWriteProt = 0 phy_init See PUB databook for details
-    apb4_write(0x3400C4,0);
-    printf("Wrote 0 to ABPONLY.DctWriteProt\n");
-    // Poll the PUB register
-    // APBONLY.UctShadowRegs[0]=1’b1 phy_init See PUB databook for details
-    apb4_read(0x340010,&tmp);
-    while((tmp&0x1)==0){
-        apb4_read(0x340010,&tmp);
-    }
-    apb4_read(0x3400C8,&tmp);
-
-    printf("APBONLY.UctWriteOnlyShadow: 0x%08x\n",tmp);
-
-    // 13 Write the PUB Register
-    //  APBONLY.DctWriteProt= 1 phy_init See PUB databook for details
-    apb4_write(0x3400C4,1);
-    printf("Wrote 1 to ABPONLY.DctWriteProt\n");
+    //apb4_read(0x340010,&tmp);
+    //while((tmp&0x1)!=0){apb4_read(0x340010,&tmp);}
+    //// 10 Read the PUB Register
+    ////    APBONLY.UctWriteOnlyShadow for training status
+    //apb4_read(0x3400C8,&tmp);
+    //printf("APBONLY.UctWriteOnlyShadow: 0x%08x\n",tmp);
+//
+    //// Write the PUB Register
+    ////  APBONLY.DctWriteProt = 0 phy_init See PUB databook for details
+    //apb4_write(0x3400C4,0);
+    //printf("Wrote 0 to ABPONLY.DctWriteProt\n");
+    //// Poll the PUB register
+    //// APBONLY.UctShadowRegs[0]=1’b1 phy_init See PUB databook for details
+    //apb4_read(0x340010,&tmp);
+    //while((tmp&0x1)==0){
+    //    apb4_read(0x340010,&tmp);
+    //}
+    //apb4_read(0x3400C8,&tmp);
+//
+    //printf("APBONLY.UctWriteOnlyShadow: 0x%08x\n",tmp);
+//
+    //// 13 Write the PUB Register
+    ////  APBONLY.DctWriteProt= 1 phy_init See PUB databook for details
+    //apb4_write(0x3400C4,1);
+    //printf("Wrote 1 to ABPONLY.DctWriteProt\n");
 
     // 14 Poll the PUB register MASTER.CalBusy=0 phy_init See PUB databook for details
     apb4_read(0x8025c,&tmp);
@@ -117,6 +131,12 @@ void something() {
     // SWSTAT.sw_done_ack after setting SWCTL.sw_done to ‘0’
     apb3_bit_clear(0x320,0);
     printf("Wrote 0 to SWCTL.B.sw_done\n");
+    apb3_read(0x3e0,&tmp); // Read OCCAPCCFG
+    if(tmp&1!=0){
+        apb3_read(0x324,&tmp);
+        while(tmp==0){apb3_read(0x324,&tmp);}
+        printf("SWSTAT.B.sw_done_ack != 0\n");
+    }    
 
     // 16 Set DFIMISC.dfi_init_start to ‘1’ 
     apb3_bit_set(0x1b0,5);
@@ -182,8 +202,33 @@ void something() {
     while( (tmp&7)==0){apb3_read(0x4,&tmp);}
     printf("STAT.B.operating_mode != 0\n");
 
-    // 26 Set back registers in step 4 to the original
-    // values if desired
+    printf("=== AXI Write/Read Test ===\n");
+    uint64_t wr_data = 0xA5A5A5A5A5A5A5A5ULL;
+    uint64_t rd_data = 0;
+
+    printf("AXI write 0x%016llX to 0x00008000\n", (unsigned long long)wr_data);
+    axi_write(0x00008000ULL, wr_data);
+
+    printf("AXI read from 0x00008000\n");
+    axi_read(0x00008000ULL, &rd_data);
+    printf("  readback: 0x%016llX\n", (unsigned long long)rd_data);
+    if (rd_data != wr_data) {
+        printf("  ERROR: readback mismatch!\n");
+    } else {
+        printf("  SUCCESS: readback matches\n");
+    }
+
+    printf("AXI burst write (4 beats) to 0x00008040\n");
+    axi_burst_write(0x00008040ULL, 0x1122334455667788ULL, 4);
+
+    printf("AXI burst read (4 beats) from 0x00008040\n");
+    axi_burst_read(0x00008040ULL, &rd_data, 4);
+    printf("  first beat: 0x%016llX\n", (unsigned long long)rd_data);
+    if (rd_data != 0x1122334455667788ULL) {
+        printf("  ERROR: burst readback mismatch!\n");
+    } else {
+        printf("  SUCCESS: burst readback matches\n");
+    }
 
     //SNPS_MCTL2_DDRC->RFSHCTL3.B.dis_auto_refresh = 0;
     //SNPS_MCTL2_DDRC->PWRCTL.B.powerdown_en = 0;

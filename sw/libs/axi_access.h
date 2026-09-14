@@ -10,7 +10,7 @@ extern void sv_axi_read(unsigned long long addr, unsigned long long *data, unsig
 #define AXI_TIMEOUT_ERROR 0xDEADBEEFDEADBEEFULL
 
 static inline void axi_set_dpi_scope(void) {
-    svScope scope = svGetScopeFromName("axi_tb.u_dpi_axi");
+    svScope scope = svGetScopeFromName("lpddr4_tb.u_dpi_axi");
     if (scope != NULL) {
         svSetScope(scope);
     }

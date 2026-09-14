@@ -1,3 +1,4 @@
+`timescale 1ps/1fs
 module lpddr4_tb();
 
     export "DPI-C" function sayHello;
@@ -60,12 +61,12 @@ module lpddr4_tb();
     );
 
     // SVT AXI master VIP attached to the wrapper's subordinate AXI port.
-    // Not enabled yet: the UVM test is suppressed (ENABLE=0) and the internal
-    // slave VIP is not connected (CONNECT_SLAVE=0) so dram_wrapper remains the
-    // sole subordinate.  Testing comes later.
+    // CONNECT_SLAVE=0 keeps dram_wrapper as the sole subordinate on DRAM_AXI;
+    // the SVT slave VIP is not instantiated so it never drives the bus.
     dpi_axi #(
         .CONNECT_SLAVE(1'b0),
-        .ENABLE(1'b0)
+        .ENABLE(1'b1),
+        .RUN_TEST(1'b0)
     ) u_dpi_axi(
         .ACLK(CLK),
         .ARESETn(RSTn),

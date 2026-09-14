@@ -274,7 +274,7 @@ DWC_ddr_umctl2 u_snps_ddr_ctrl (
     .waq_pop_0(),
     .waq_push_0(),
     .waq_split_0(),
-    .awautopre_0(DRAM_AXI.AWVALID),
+    .awautopre_0(1'b0),
 // AXI Port 0 Write Data Channel
     .wdata_0(DRAM_AXI.WDATA),
     .wstrb_0(DRAM_AXI.WSTRB),
@@ -309,7 +309,7 @@ DWC_ddr_umctl2 u_snps_ddr_ctrl (
     .raq_pop_0(),
     .raq_push_0(),
     .raq_split_0(),
-    .arautopre_0(DRAM_AXI.ARVALID),
+    .arautopre_0(1'b0),
 // AXI Port 0 Read Data Channel
 //-----------------------------------------------
     .rid_0(DRAM_AXI.RID),
