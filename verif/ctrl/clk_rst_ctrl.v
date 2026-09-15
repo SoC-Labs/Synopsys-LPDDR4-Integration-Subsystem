@@ -16,6 +16,6 @@ initial begin
 end
 
 always @(clk)
-    #625 clk <= !clk;
+    #1250 clk <= !clk;
 
 endmodule

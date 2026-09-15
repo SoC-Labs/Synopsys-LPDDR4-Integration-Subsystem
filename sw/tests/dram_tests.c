@@ -195,6 +195,9 @@ void something() {
     // Require polling SWSTAT.sw_done_ack after setting SWCTL.sw_done to 1
     apb3_bit_set(0x320,0);
     printf("Wrote 1 to SWCTL.B.sw_done\n");
+    apb3_read(0x324,&tmp);
+    while(tmp==0){apb3_read(0x324,&tmp);}
+    printf("SWSTAT.B.sw_done_ack != 0\n");
 
     // 25 Wait for DWC_ddr_umctl2 to move to normal
     // operating mode by monitoring STAT.operating_mode signal

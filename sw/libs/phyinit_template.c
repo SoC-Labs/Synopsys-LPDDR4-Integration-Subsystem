@@ -47,42 +47,49 @@ void dwc_ddrphy_phyinit_userCustom_B_startClockResetPhy (){
     return;
 }
 void dwc_ddrphy_phyinit_userCustom_E_setDfiClk(int a){
+  printf("** STEP E **\n");
+  printf("Set clock to Pstate %d\n",a);
   return;
 }
 void dwc_ddrphy_phyinit_userCustom_G_waitFwDone(){
   	uint32_t tmp;
-    // 9 Poll the PUB register
-    //  APBONLY.UctShadowRegs[0]=1’b0 
-    apb4_read(0x340010,&tmp);
-    while((tmp&0x1)!=0){apb4_read(0x340010,&tmp);}
-    // 10 Read the PUB Register
-    //    APBONLY.UctWriteOnlyShadow for training status
-    apb4_read(0x3400C8,&tmp);
-    printf("APBONLY.UctWriteOnlyShadow: 0x%08x\n",tmp);
+    uint32_t mail=0x100;
+    uint32_t mail_get=0x00;
+    while(mail!=0x07){
+      // 9 Poll the PUB register
+      //  APBONLY.UctShadowRegs[0]=1’b0 
+      apb4_read(0x340010,&tmp);
+      while((tmp&0x1)!=0){apb4_read(0x340010,&tmp);}
+      // 10 Read the PUB Register
+      //    APBONLY.UctWriteOnlyShadow for training status
+      apb4_read(0x3400C8,&mail_get);
+      printf("APBONLY.UctWriteOnlyShadow: 0x%08x\n",mail_get);
 
-    // Write the PUB Register
-    //  APBONLY.DctWriteProt = 0 phy_init See PUB databook for details
-    apb4_write(0x3400C4,0);
-    printf("Wrote 0 to ABPONLY.DctWriteProt\n");
-    // Poll the PUB register
-    // APBONLY.UctShadowRegs[0]=1’b1 phy_init See PUB databook for details
-    apb4_read(0x340010,&tmp);
-    while((tmp&0x1)==0){
-        apb4_read(0x340010,&tmp);
+      // Write the PUB Register
+      //  APBONLY.DctWriteProt = 0 phy_init See PUB databook for details
+      apb4_write(0x3400C4,0);
+      printf("Wrote 0 to ABPONLY.DctWriteProt\n");
+      // Poll the PUB register
+      // APBONLY.UctShadowRegs[0]=1’b1 phy_init See PUB databook for details
+      apb4_read(0x340010,&tmp);
+      while((tmp&0x1)==0){
+          apb4_read(0x340010,&tmp);
+      }
+
+      if(mail_get==0x08){
+        // Streaming message
+        // Read upper bytes
+        apb4_read(0x3400d0,&tmp);
+        printf("Upper byte of Streaming msg: 0x%08x\n",tmp);
+      }
+
+      // 13 Write the PUB Register
+      //  APBONLY.DctWriteProt= 1 phy_init See PUB databook for details
+      apb4_write(0x3400C4,1);
+      printf("Wrote 1 to ABPONLY.DctWriteProt\n");
+      mail=mail_get;
+
     }
-    apb4_read(0x3400C8,&tmp);
-
-    printf("APBONLY.UctWriteOnlyShadow: 0x%08x\n",tmp);
-
-    // 13 Write the PUB Register
-    //  APBONLY.DctWriteProt= 1 phy_init See PUB databook for details
-    apb4_write(0x3400C4,1);
-    printf("Wrote 1 to ABPONLY.DctWriteProt\n");
-
-    // 14 Poll the PUB register MASTER.CalBusy=0 phy_init See PUB databook for details
-    apb4_read(0x8025c,&tmp);
-    while((tmp!=0)){apb4_read(0x8025c,&tmp);}
-
   	return;
 }
 void dwc_ddrphy_phyinit_userCustom_H_readMsgBlock(int a){

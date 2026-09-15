@@ -154,7 +154,7 @@ module dram_PHY (
     output wire         DDR4_CK_T,
     output wire         DDR4_CK_C,
     output wire [1:0]   DDR4_CKE,
-    output wire [1:0]   DDR4_CS_N,
+    output wire [1:0]   DDR4_CS,
     output wire [5:0]   DDR4_ADR,
     output wire         DDR4_ODT,
     inout  wire [1:0]   DDR4_DQS_T,
@@ -177,7 +177,7 @@ wire [23:0] BP_D;
 wire [11:0] BP_A;
 
 assign DDR4_CKE[1:0] = BP_A[1:0];
-assign DDR4_CS_N[1:0] = BP_A[7:6];
+assign DDR4_CS[1:0] = BP_A[7:6];
 assign DDR4_ADR = {BP_A[11:8],BP_A[3:2]};
 assign DDR4_CK_T = BP_A[4];
 assign DDR4_CK_C = BP_A[5];
