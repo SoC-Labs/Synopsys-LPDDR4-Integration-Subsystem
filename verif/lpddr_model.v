@@ -183,8 +183,8 @@ task initialize_inst;
     memory.set_data_prop(is_valid, cfg_handle, "enable_transaction_tracing", 1'b1 , 0);
     memory.set_data_prop(is_valid, cfg_handle, "enable_transaction_reporting", 1'b1 , 0);
     memory.set_data_prop(is_valid, cfg_handle, "enable_cov", 5'b00000 , 0);
-    memory.set_data_prop(is_valid, cfg_handle, "enable_osc", 1 , 0);
-    memory.set_data_prop(is_valid, cfg_handle, "dqs_osc_multi_val", 2 , 0);
+    //memory.set_data_prop(is_valid, cfg_handle, "enable_osc", 1 , 0);
+    //memory.set_data_prop(is_valid, cfg_handle, "dqs_osc_multi_val", 2 , 0);
 
      // Disable training protocol checks that are expected to be violated
      // during PHY init (per documentation: training firmware does not
