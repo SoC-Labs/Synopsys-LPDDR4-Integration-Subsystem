@@ -92,21 +92,21 @@ module dram_PHY (
     output wire [1:0]   dfi_rddata_valid_W3,
 
 
-    input  wire         WSI,                  
-    input  wire         TDRCLK,                 
-    input  wire         WRSTN,                
-    input  wire         DdrPhyCsrCmdTdrShiftEn,    
-    input  wire         DdrPhyCsrCmdTdrCaptureEn,  
-    input  wire         DdrPhyCsrCmdTdrUpdateEn,   
-    output wire         DdrPhyCsrCmdTdr_Tdo,       
-    input  wire         DdrPhyCsrRdDataTdrShiftEn,    
-    input  wire         DdrPhyCsrRdDataTdrCaptureEn,  
-    input  wire         DdrPhyCsrRdDataTdrUpdateEn,   
-    output wire         DdrPhyCsrRdDataTdr_Tdo,       
+    input  wire         WSI,
+    input  wire         TDRCLK,
+    input  wire         WRSTN,
+    input  wire         DdrPhyCsrCmdTdrShiftEn,
+    input  wire         DdrPhyCsrCmdTdrCaptureEn,
+    input  wire         DdrPhyCsrCmdTdrUpdateEn,
+    output wire         DdrPhyCsrCmdTdr_Tdo,
+    input  wire         DdrPhyCsrRdDataTdrShiftEn,
+    input  wire         DdrPhyCsrRdDataTdrCaptureEn,
+    input  wire         DdrPhyCsrRdDataTdrUpdateEn,
+    output wire         DdrPhyCsrRdDataTdr_Tdo,
 
-    output wire         dwc_ddrphy_int_n, 
-   
-    output wire         dwc_ddrphy_dto,   
+    output wire         dwc_ddrphy_int_n,
+
+    output wire         dwc_ddrphy_dto,
 
 
     input  wire [5:0]   atpg_se,

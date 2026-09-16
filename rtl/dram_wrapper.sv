@@ -112,10 +112,10 @@ wire            dfi_geardown_en;
 
 wire            dfi_lp_req;         // DFI LP request
 wire            dfi_lp_ack;         // DFI LP acknowledge
-wire            dfi_phyupd_req;     // DFI PHY update request 
-wire            dfi_phyupd_ack;     // DFI PHY update acknowledge 
+wire            dfi_phyupd_req;     // DFI PHY update request
+wire            dfi_phyupd_ack;     // DFI PHY update acknowledge
 
-wire [1:0]      dfi_phyupd_type;  // DFI PHY update type 
+wire [1:0]      dfi_phyupd_type;  // DFI PHY update type
 wire [3:0]      dfi_lp_wakeup;    // DFI LP wakeup
 
 wire            dfi_phymstr_req;        // DFI PHY Master Interface request
@@ -377,7 +377,7 @@ DWC_ddr_umctl2 u_snps_ddr_ctrl (
     .dfi_rddata_en(dfi_rddata_en),
     .dfi_rddata_valid({2'b00,dfi_rddata_valid[3:0]}),
     .dfi_rddata_dbi(dfi_rddata_dbi),
-    
+
     .dfi_wrdata_cs(dfi_wrdata_cs),
     .dfi_rddata_cs(dfi_rddata_cs),
 

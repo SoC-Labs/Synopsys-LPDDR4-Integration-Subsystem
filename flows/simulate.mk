@@ -39,7 +39,7 @@ endif
 
 
 compile_vcs: $(SIM_BASE_DIR) $(SIM_BUILD_DIR)
-	cd $(SIM_BUILD_DIR); vcs $(VCS_OPTIONS) -f $(TBENCH_VC) -kdb $(DEFINES_VC)  | tee compile_vcs.log
+	cd $(SIM_BUILD_DIR); vcs $(VCS_OPTIONS) -f $(TBENCH_VC) -kdb -lca +define+SVT_FSDB_ENABLE $(DEFINES_VC)  | tee compile_vcs.log
 
 $(SIMV): compile_vcs
 

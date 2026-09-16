@@ -104,11 +104,14 @@ void dwc_ddrphy_phyinit_userCustom_G_waitFwDone(){
 			// Streaming Message
 			stream=get_mail(32);
 			printf("Stream = 0x%08x\n",stream);
-			if(stream==0x00e10001){
+			for(int i=0; i<(0xFFFF&stream);i++){
 				args=get_mail(32);
 				printf("Stream args = 0x%08x\n",args);
 			}
 		}
+	}
+	if(mail==0x07){
+		printf("** TRAINING SUCCESSFUL **\n");
 	}
 	return;
 }

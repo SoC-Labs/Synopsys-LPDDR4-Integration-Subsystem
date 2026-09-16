@@ -7,8 +7,8 @@ DEFINES_VC += +define+UVM_VERBOSITY=UVM_FULL  +define+SYNOPSYS_SV +define+SVT_UV
 DEFINES_VC += +define+SVT_LPDDR_CA_WIDTH=6 +define+SVT_LPDDR_MAX_DQS_WIDTH=2 +define+SVT_LPDDR_MAX_DQ_WIDTH=16 +define+SVT_LPDDR4_MAX_DMI_WIDTH=2
 
 DEFINES_VC += +define+DWC_DDRPHY_NO_PG_PINS_MACROS +define+DWC_DDRPHY_TECH__CDCBUF__DISABLE_BEHAVIORAL_VERILOG
-DEFINES_VC += +define+DWC_DDRPHY_HWEMUL +define+DWC_DDRPHY_PLL_ACCURATE +define+DWC_DDRPHY_SIMPLE_MODEL
-DEFINES_VC += +define+DWC_DDRPHY_HWEMUL_CGRC +define+DWC_DDRPHY_MODEL_ASYNCMSFLOP_AS_DFF
+DEFINES_VC += +define+DWC_DDRPHY_HWEMUL +define+DWC_DDRPHY_PLL_ACCURATE 
+DEFINES_VC += +define+DWC_DDRPHY_MODEL_ASYNCMSFLOP_AS_DFF
 
 SYNOPSYS_LPDDR4_UMCTL2_DIR ?= /research/synopsys/lpddr4/megaSoC_lpddr4/megaSoC_lpddr4/
 SYNOPSYS_LPDDR4_multiPHY_DIR ?= /research/synopsys/lpddr4_m_phy_megasoc
@@ -25,6 +25,7 @@ build_vip_models:
 	$(DESIGNWARE_HOME)/bin/dw_vip_setup -path $(LPDDR4_PROJECT_DIR)/verif/models/lpddr_vip -e lpddr_svt/tb_lpddr4_svt_verilog_basic_sys -svlog
 	$(DESIGNWARE_HOME)/bin/dw_vip_setup -path $(LPDDR4_PROJECT_DIR)/verif/models/apb_driver -e amba_svt/tb_apb_svt_uvm_basic_sys -svlog
 	$(DESIGNWARE_HOME)/bin/dw_vip_setup -path $(LPDDR4_PROJECT_DIR)/verif/models/axi_driver -e amba_svt/tb_axi_svt_uvm_basic_sys -svlog
+	$(DESIGNWARE_HOME)/bin/dw_vip_setup -path $(LPDDR4_PROJECT_DIR)/verif/models/dfi_vip -e dfi_svt/tb_dfi_lpddr4_mc_svt_uvm_basic_sys -svlog
 
 build_phyinit:
 	make -C $(SYNOPSYS_PHYINIT_PATH) OUTDIR=$(LPDDR4_PROJECT_DIR)/sw/libs/phyinit CUSTDIR=$(LPDDR4_PROJECT_DIR)/sw/libs/userCustom

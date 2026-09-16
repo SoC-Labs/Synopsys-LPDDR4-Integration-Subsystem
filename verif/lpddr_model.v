@@ -93,7 +93,7 @@ task initialize_inst;
   static string    lpddr4_part_number ;
   static string    lpddr4A_part_number ;
   bit              lpddr4_ext;
-  begin 
+  begin
 
     //check for lpddr4A config.
     if ($value$plusargs("LPDDR4_EXT=%s", lpddr4_ext)) begin
@@ -175,7 +175,6 @@ task initialize_inst;
     $display("  **** Writing memory configuration  ****");
     memory.get_data_prop(is_valid, `SVT_CMD_NULL_HANDLE, "cfg", cfg_handle, 0);
     memory.set_data_prop(is_valid, cfg_handle, "bypass_initialization", 1'b0 , 0);
-    memory.set_data_prop(is_valid, cfg_handle, "bypass_trainings", 1'b1 , 0);
     memory.set_data_prop(is_valid, cfg_handle, "enable_memcore_xml_gen", 1'b1 , 0);
     memory.set_data_prop(is_valid, cfg_handle, "enable_xact_xml_gen", 1'b1 , 0);
     memory.set_data_prop(is_valid, cfg_handle, "enable_fsm_xml_gen", 1'b1 , 0);
@@ -189,12 +188,12 @@ task initialize_inst;
      // Disable training protocol checks that are expected to be violated
      // during PHY init (per documentation: training firmware does not
      // send refresh commands to preserve array contents)
-     // memory.set_data_prop(is_valid, `SVT_CMD_NULL_HANDLE, "err_check.common_err_check.enable_checks(refresh_timing_group)", 0, 0);
-     // if (!is_valid) $display("%m: WARNING - failed to disable refresh_timing_group");
+     memory.set_data_prop(is_valid, `SVT_CMD_NULL_HANDLE, "err_check.common_err_check.enable_checks(refresh_timing_group)", 0, 0);
+     if (!is_valid) $display("%m: WARNING - failed to disable refresh_timing_group");
      // memory.set_data_prop(is_valid, `SVT_CMD_NULL_HANDLE, "err_check.common_err_check.enable_checks(power_down_group)", 0, 0);
      // if (!is_valid) $display("%m: WARNING - failed to disable power_down_group");
-     // memory.set_data_prop(is_valid, `SVT_CMD_NULL_HANDLE, "err_check.common_err_check.enable_checks(input_clk_stop_and_frequency_change_group)", 0, 0);
-     // if (!is_valid) $display("%m: WARNING - failed to disable input_clk_stop_group");
+     memory.set_data_prop(is_valid, `SVT_CMD_NULL_HANDLE, "err_check.common_err_check.enable_checks(input_clk_stop_and_frequency_change_group)", 0, 0);
+     if (!is_valid) $display("%m: WARNING - failed to disable input_clk_stop_group");
      // memory.set_data_prop(is_valid, `SVT_CMD_NULL_HANDLE, "err_check.common_err_check.enable_checks(fsm_group)", 0, 0);
      // if (!is_valid) $display("%m: WARNING - failed to disable fsm_group");
      // memory.set_data_prop(is_valid, `SVT_CMD_NULL_HANDLE, "err_check.common_err_check.enable_checks(read_group)", 0, 0);

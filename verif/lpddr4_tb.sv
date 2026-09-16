@@ -1,3 +1,8 @@
+`include "uvm_pkg.sv"
+
+import uvm_pkg::*;
+
+
 `timescale 1ps/1fs
 module lpddr4_tb();
 
@@ -5,6 +10,10 @@ module lpddr4_tb();
     export "DPI-C" function endSim;
     import "DPI-C" context task something();
     initial #100 something();
+
+    initial begin
+        run_test("combined_test");
+    end
 
     function int sayHello();
         $display("Hello world");
@@ -60,13 +69,8 @@ module lpddr4_tb();
         .DRAM_PHY_CFG_APB_master(DRAM_PHY_CFG_APB)
     );
 
-    // SVT AXI master VIP attached to the wrapper's subordinate AXI port.
-    // CONNECT_SLAVE=0 keeps dram_wrapper as the sole subordinate on DRAM_AXI;
-    // the SVT slave VIP is not instantiated so it never drives the bus.
     dpi_axi #(
-        .CONNECT_SLAVE(1'b0),
-        .ENABLE(1'b1),
-        .RUN_TEST(1'b0)
+        .CONNECT_SLAVE(1'b1)
     ) u_dpi_axi(
         .ACLK(CLK),
         .ARESETn(RSTn),
