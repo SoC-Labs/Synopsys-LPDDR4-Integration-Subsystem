@@ -115,7 +115,7 @@ task initialize_inst;
     		    $display("  **** Overwriting part name to %s via command line ****",lpddr4_part_number);
     		  end
     		else
-    		  lpddr4_part_number = "jedec_lpddr4_2G_x16_1600_1_25.cfg";
+    		  lpddr4_part_number = "jedec_lpddr4_2G_x16_1600_1_25";
 		end
     end
     // Overwriting the part name if it is supplied from command line else
@@ -125,7 +125,7 @@ task initialize_inst;
         $display("  **** Overwriting part name to %s via command line ****",lpddr4_part_number);
       end
     else
-      lpddr4_part_number = "jedec_lpddr4_2G_x16_1600_1_25.cfg";
+      lpddr4_part_number = "jedec_lpddr4_2G_x16_1600_1_25";
 
     // Assign the desired values to the top level configuration properties using the utility task "update_vip"
     if (lpddr4_ext ==1'b1) begin
@@ -175,7 +175,7 @@ task initialize_inst;
     $display("  **** Writing memory configuration  ****");
     memory.get_data_prop(is_valid, `SVT_CMD_NULL_HANDLE, "cfg", cfg_handle, 0);
     memory.set_data_prop(is_valid, cfg_handle, "bypass_initialization", 1'b0 , 0);
-    memory.set_data_prop(is_valid, cfg_handle, "bypass_trainings", 1'b0 , 0);
+    memory.set_data_prop(is_valid, cfg_handle, "bypass_trainings", 1'b1 , 0);
     memory.set_data_prop(is_valid, cfg_handle, "enable_memcore_xml_gen", 1'b1 , 0);
     memory.set_data_prop(is_valid, cfg_handle, "enable_xact_xml_gen", 1'b1 , 0);
     memory.set_data_prop(is_valid, cfg_handle, "enable_fsm_xml_gen", 1'b1 , 0);

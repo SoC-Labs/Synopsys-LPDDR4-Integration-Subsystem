@@ -13,8 +13,7 @@ DEFINES_VC += +define+DWC_DDRPHY_HWEMUL_CGRC +define+DWC_DDRPHY_MODEL_ASYNCMSFLO
 SYNOPSYS_LPDDR4_UMCTL2_DIR ?= /research/synopsys/lpddr4/megaSoC_lpddr4/megaSoC_lpddr4/
 SYNOPSYS_LPDDR4_multiPHY_DIR ?= /research/synopsys/lpddr4_m_phy_megasoc
 SYNOPSYS_LPDDR4_multiPHY_LIB_DIR ?= /research/synopsys/LPDDR4-m-PHY-V2_TSMC_16FFC/synopsys/dwc_lpddr4_multiphy_v2_tsmc16ffc18/Latest
-SYNOPSYS_PHYINIT_PATH?=/research/synopsys/LPDDR4-m-PHY-V2_TSMC_16FFC/synopsys/dwc_lpddr4_multiphy_v2_tsmc16ffc18/Latest/phyinit/Latest/software/lpddr4
-
+SYNOPSYS_PHYINIT_PATH?=/research/synopsys/lpddr4/synopsys/dwc_lpddr4_multiphy_v2_firmware/latest/phyinit/Latest/software/lpddr4
 # Make variables visible to target shells
 export DEFINES_VC
 export SYNOPSYS_LPDDR4_UMCTL2_DIR

@@ -5,6 +5,7 @@ SIM_BASE_DIR=$(LPDDR4_PROJECT_DIR)/sim
 SIM_BUILD_DIR=$(SIM_BASE_DIR)/build
 SIM_DIR=$(SIM_BASE_DIR)/$(TESTNAME)
 TBENCH_VC = $(LPDDR4_PROJECT_DIR)/flist/tb.vc
+SIMV = $(SIM_BUILD_DIR)/simv
 
 FW_BUILD_DIR=$(LPDDR4_PROJECT_DIR)/sw/build
 FW_TEST_DIR=$(LPDDR4_PROJECT_DIR)/sw/tests
@@ -40,7 +41,9 @@ endif
 compile_vcs: $(SIM_BASE_DIR) $(SIM_BUILD_DIR)
 	cd $(SIM_BUILD_DIR); vcs $(VCS_OPTIONS) -f $(TBENCH_VC) -kdb $(DEFINES_VC)  | tee compile_vcs.log
 
-run_vcs: $(SIM_DIR) $(TEST_SO)
+$(SIMV): compile_vcs
+
+run_vcs: $(SIM_DIR) $(TEST_SO) $(SIMV)
 	mkdir -p $(SIM_DIR)
 	@echo quit > $(SIM_DIR)/quit.do
 	@if [ ! -d $(SIM_DIR)/logs ] ; then \
