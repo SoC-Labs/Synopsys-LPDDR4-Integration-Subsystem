@@ -15,6 +15,7 @@ ${LPDDR4_PROJECT_DIR}/verif/axi4_svt_adapter.sv
 ${LPDDR4_PROJECT_DIR}/verif/lpddr4_tb.sv
 ${LPDDR4_PROJECT_DIR}/verif/lpddr_model.v
 ${LPDDR4_PROJECT_DIR}/verif/combined_test.sv
+${LPDDR4_PROJECT_DIR}/verif/dfi_monitor.sv
 ${LPDDR4_PROJECT_DIR}/verif/dpi_apb.sv
 ${LPDDR4_PROJECT_DIR}/verif/ctrl/clk_rst_ctrl.v
 ${LPDDR4_PROJECT_DIR}/verif/dpi_axi.sv

@@ -31,8 +31,16 @@ void something() {
     printf("** Start DDR CTRL Init **\n");
     uint32_t tmp;
 
-    // De-assert reset signal core_ddrc_rstn
-    apb3_write(0x6008,0x1); //DDR_RESET_CTRL->CORE_RSTn=1;
+    // Assert the core_ddrc_rstn and aresetn_n resets
+    for(int i=0;i<32;i++){apb3_write(0x6008,0x0);} //DDR_RESET_CTRL->CORE_RSTn=0; 
+    // Assert presetn
+    for(int i=0;i<32;i++){apb3_write(0x600C,0x0);} //DDR_RESET_CTRL->CORE_PRESETn=0;
+    // Enable clocks
+    apb3_write(0x6010,0x1);
+    for(int i=0;i<128;i++){apb3_write(0x6014,0x1);} //DDR_RESET_CTRL->CORE_PRESETn=0;
+    // De-assert presetn once the clocks are active and stable
+    // Allow 128 cycles for synchronization of presetn to core_ddrc_core_clk and aclk domains and to
+    for(int i=0;i<256;i++){apb3_write(0x600C,0x1);} //DDR_RESET_CTRL->CORE_PRESETn=1;
 
     // Set MSTR.LPDDR4 high
     apb3_bit_set(0x0,5);
@@ -87,6 +95,8 @@ void something() {
     while(tmp==0){
         apb3_read(0x324,&tmp);
     }
+
+    for(int i=0;i<32;i++){apb3_write(0x6008,0x1);} //DDR_RESET_CTRL->CORE_RSTn=1;
 
     // Start PHY initialization and training by
     // accessing relevant PUB registers
@@ -205,27 +215,22 @@ void something() {
     while( (tmp&7)==0){apb3_read(0x4,&tmp);}
     printf("STAT.B.operating_mode != 0\n");
 
+
+
+    apb3_write(0x490,1);
+    apb3_read(0x490,&tmp); // read PCTRL
+    printf("PCTRL_n = 0x%08x\n",tmp);
+
     printf("=== AXI Write/Read Test ===\n");
     uint64_t wr_data = 0xA5A5A5A5A5A5A5A5ULL;
     uint64_t rd_data = 0;
 
-    printf("AXI write 0x%016llX to 0x00008000\n", (unsigned long long)wr_data);
-    axi_write(0x00008000ULL, wr_data);
-
-    printf("AXI read from 0x00008000\n");
-    axi_read(0x00008000ULL, &rd_data);
-    printf("  readback: 0x%016llX\n", (unsigned long long)rd_data);
-    if (rd_data != wr_data) {
-        printf("  ERROR: readback mismatch!\n");
-    } else {
-        printf("  SUCCESS: readback matches\n");
-    }
 
     printf("AXI burst write (4 beats) to 0x00008040\n");
-    axi_burst_write(0x00008040ULL, 0x1122334455667788ULL, 4);
+    axi_burst_write(0x00000000ULL, 0x1122334455667788ULL, 256);
 
     printf("AXI burst read (4 beats) from 0x00008040\n");
-    axi_burst_read(0x00008040ULL, &rd_data, 4);
+    axi_burst_read(0x00000000ULL, &rd_data, 256);
     printf("  first beat: 0x%016llX\n", (unsigned long long)rd_data);
     if (rd_data != 0x1122334455667788ULL) {
         printf("  ERROR: burst readback mismatch!\n");

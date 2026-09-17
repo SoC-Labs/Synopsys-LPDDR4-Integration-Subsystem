@@ -9,7 +9,7 @@ module lpddr4_tb();
     export "DPI-C" function sayHello;
     export "DPI-C" function endSim;
     import "DPI-C" context task something();
-    initial #100 something();
+    initial #40000 something();
 
     initial begin
         run_test("combined_test");
@@ -69,9 +69,7 @@ module lpddr4_tb();
         .DRAM_PHY_CFG_APB_master(DRAM_PHY_CFG_APB)
     );
 
-    dpi_axi #(
-        .CONNECT_SLAVE(1'b1)
-    ) u_dpi_axi(
+    dpi_axi u_dpi_axi(
         .ACLK(CLK),
         .ARESETn(RSTn),
         .DRAM_AXI(DRAM_AXI)
@@ -127,5 +125,56 @@ module lpddr4_tb();
         .DDR4_ZN_SENSE(DDR_ZN_SENSE),
         .DDR4_ZN(DDR_ZN)
     );
+
+`define PHY_DFI u_dram_wrapper.u_dram_PHY
+
+dfi_monitor u_dfi_monitor(
+    .dfi_reset_n(`PHY_DFI.dfi_reset_n),
+    .dfi0_ctrlupd_ack(`PHY_DFI.dfi0_ctrlupd_ack),
+    .dfi0_ctrlupd_req(`PHY_DFI.dfi0_ctrlupd_req),
+    .dfi0_phyupd_ack(`PHY_DFI.dfi0_phyupd_ack),
+    .dfi0_phyupd_req(`PHY_DFI.dfi0_phyupd_req),
+    .dfi0_phyupd_type(`PHY_DFI.dfi0_phyupd_type),
+    .dfi0_dram_clk_disable(`PHY_DFI.dfi0_dram_clk_disable),
+    .dfi0_freq(`PHY_DFI.dfi0_freq),
+    .dfi0_freq_ratio(`PHY_DFI.dfi0_freq_ratio),
+    .dfi0_init_complete(`PHY_DFI.dfi0_init_complete),
+    .dfi0_init_start(`PHY_DFI.dfi0_init_start),
+    .dfi0_phymstr_ack(`PHY_DFI.dfi0_phymstr_ack),
+    .dfi0_phymstr_cs_state(`PHY_DFI.dfi0_phymstr_cs_state),
+    .dfi0_phymstr_req(`PHY_DFI.dfi0_phymstr_req),
+    .dfi0_phymstr_state_sel(`PHY_DFI.dfi0_phymstr_state_sel),
+    .dfi0_phymstr_type(`PHY_DFI.dfi0_phymstr_type),
+    .dfi0_address_P0(`PHY_DFI.dfi0_address_P0),
+    .dfi0_address_P1(`PHY_DFI.dfi0_address_P1),
+    .dfi0_cke_P0(`PHY_DFI.dfi0_cke_P0),
+    .dfi0_cke_P1(`PHY_DFI.dfi0_cke_P1),
+    .dfi0_cs_P0(`PHY_DFI.dfi0_cs_P0),
+    .dfi0_cs_P1(`PHY_DFI.dfi0_cs_P1),
+    .dfi0_lp_ack(`PHY_DFI.dfi0_lp_ack),
+    .dfi0_lp_ctrl_req(`PHY_DFI.dfi0_lp_ctrl_req),
+    .dfi0_lp_data_req(`PHY_DFI.dfi0_lp_data_req),
+    .dfi0_lp_wakeup(`PHY_DFI.dfi0_lp_wakeup),
+    .dfi0_error(`PHY_DFI.dfi0_error),
+    .dfi0_error_info(`PHY_DFI.dfi0_error_info),
+    .dfi_wrdata_P0(`PHY_DFI.dfi_wrdata_P0),
+    .dfi_wrdata_P1(`PHY_DFI.dfi_wrdata_P1),
+    .dfi_wrdata_cs_n_P0(`PHY_DFI.dfi_wrdata_cs_n_P0),
+    .dfi_wrdata_cs_n_P1(`PHY_DFI.dfi_wrdata_cs_n_P1),
+    .dfi_wrdata_en_P0(`PHY_DFI.dfi_wrdata_en_P0),
+    .dfi_wrdata_en_P1(`PHY_DFI.dfi_wrdata_en_P1),
+    .dfi_wrdata_mask_P0(`PHY_DFI.dfi_wrdata_mask_P0),
+    .dfi_wrdata_mask_P1(`PHY_DFI.dfi_wrdata_mask_P1),
+    .dfi_rddata_W0(`PHY_DFI.dfi_rddata_W0),
+    .dfi_rddata_W1(`PHY_DFI.dfi_rddata_W1),
+    .dfi_rddata_cs_n_P0(`PHY_DFI.dfi_rddata_cs_n_P0),
+    .dfi_rddata_cs_n_P1(`PHY_DFI.dfi_rddata_cs_n_P1),
+    .dfi_rddata_dbi_W0(`PHY_DFI.dfi_rddata_dbi_W0),
+    .dfi_rddata_dbi_W1(`PHY_DFI.dfi_rddata_dbi_W1),
+    .dfi_rddata_en_P0(`PHY_DFI.dfi_rddata_en_P0),
+    .dfi_rddata_en_P1(`PHY_DFI.dfi_rddata_en_P1),
+    .dfi_rddata_valid_W0(`PHY_DFI.dfi_rddata_valid_W0),
+    .dfi_rddata_valid_W1(`PHY_DFI.dfi_rddata_valid_W1)
+);
 
 endmodule

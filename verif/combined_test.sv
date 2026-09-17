@@ -121,6 +121,11 @@ class dpi_axi_seq extends svt_axi_master_base_sequence;
       foreach (txn.rready_delay[i])
         txn.rready_delay[i] = i;
     end
+    if (is_write) begin
+      txn.wvalid_delay = new[burst_length];
+      foreach (txn.wvalid_delay[i])
+        txn.wvalid_delay[i] = 1;
+    end
     txn.id = 'h1;
 
     start_item(txn);

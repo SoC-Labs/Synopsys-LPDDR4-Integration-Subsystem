@@ -23,7 +23,7 @@ TEST_SO_NO=$(FW_BUILD_DIR)/$(TESTNAME)
 COVERAGE ?= 0
 LINT ?= 0
 VCS_OPTIONS    = +ddr_squashz_to_0 +vcs+lic+wait +v2k -sverilog -timescale=1ns/100fs -debug +plusarg_save -debug_access+pp+dmptf+thread -debug_region=cell+encrypt -notice 
-VCS_SIM_OPTION = +ddr_squashz_to_0 +vcs+lic+wait +vcs+flush+log -assert nopostproc
+VCS_SIM_OPTION = +ddr_squashz_to_0 +vcs+lic+wait +vcs+flush+log -assert nopostproc -ntb_opts
 VCS_VC_OPTIONS = -f $(TBENCH_VC) 
 VCS_OPTIONS   += -ntb_opts uvm -full64 -sverilog $(DESIGNWARE_HOME)/vip/svt/common/latest/C/lib/amd64/libmemserver.so
 

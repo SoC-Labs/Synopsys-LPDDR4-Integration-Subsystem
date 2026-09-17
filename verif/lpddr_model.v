@@ -181,6 +181,7 @@ task initialize_inst;
     memory.set_data_prop(is_valid, cfg_handle, "enable_cfg_xml_gen", 1'b0 , 0);
     memory.set_data_prop(is_valid, cfg_handle, "enable_transaction_tracing", 1'b1 , 0);
     memory.set_data_prop(is_valid, cfg_handle, "enable_transaction_reporting", 1'b1 , 0);
+    memory.set_data_prop(is_valid, cfg_handle, "enable_transaction_tracing", 1'b1, 0);
     memory.set_data_prop(is_valid, cfg_handle, "enable_cov", 5'b00000 , 0);
     //memory.set_data_prop(is_valid, cfg_handle, "enable_osc", 1 , 0);
     //memory.set_data_prop(is_valid, cfg_handle, "dqs_osc_multi_val", 2 , 0);

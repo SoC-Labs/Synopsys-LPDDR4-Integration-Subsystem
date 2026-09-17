@@ -152,6 +152,11 @@ wire        pmu_sram_clk_gated;
 wire        ddr_phy_reset;
 wire        ddr_phy_pwrok;
 wire        ddr_core_rstn;
+wire        ddrctrl_presetn;
+wire        ddrctrl_aclken;
+wire        ddrctrl_pclken;
+wire        ACLK_gated;
+wire        PCLK_gated;
 
 apb3        DRAM_RST_CTRL_APB();
 apb3        DRAM_CFG_APB_i();
@@ -166,6 +171,10 @@ assign DRAM_CFG_APB_i.penable = DRAM_CFG_APB.penable;
 assign DRAM_CFG_APB_i.pwrite = DRAM_CFG_APB.pwrite;
 assign DRAM_CFG_APB_i.pwdata = DRAM_CFG_APB.pwdata;
 assign DRAM_PHY_CFG_APB.prdata[31:16]=16'h0000;
+
+// tie offs
+assign dfi_rddata[95:64]=32'd0;
+assign dfi_rddata_dbi[11:8]=4'd0;
 
 wire [5:0] DRAM_CFG_APB_i_psel_mux;
 assign DRAM_CFG_APB_i.psel = |DRAM_CFG_APB_i_psel_mux;
@@ -244,15 +253,33 @@ phy_reset_ctrl u_ddr_phy_reset_ctrl(
     .pslverr(DRAM_RST_CTRL_APB.pslverr),
     .ddrphy_pwrok(ddr_phy_pwrok),
     .ddrphy_reset(ddr_phy_reset),
-    .ddrcore_rstn(ddr_core_rstn)
+    .ddrcore_rstn(ddr_core_rstn),
+    .ddrctrl_presetn(ddrctrl_presetn),
+    .ddrctrl_aclken(ddrctrl_aclken),
+    .ddrctrl_pclken(ddrctrl_pclken)
 );
 
+
+
+clock_gate u_cg_umctl_aclk(
+    .clk(ACLK),
+    .enable(ddrctrl_aclken),
+    .gated_clk(ACLK_gated)
+);
+
+clock_gate u_cg_umctl_pclk(
+    .clk(PCLK),
+    .enable(ddrctrl_pclken),
+    .gated_clk(PCLK_gated)
+);
+
+
 DWC_ddr_umctl2 u_snps_ddr_ctrl (
-    .core_ddrc_core_clk(ACLK),
+    .core_ddrc_core_clk(ACLK_gated),
     .core_ddrc_rstn(ddr_core_rstn),
 
-    .aresetn_0(ARESETn),
-    .aclk_0(ACLK),
+    .aresetn_0(ddr_core_rstn),
+    .aclk_0(ACLK_gated),
 // AXI Port 0 Write Address Channel
 //-----------------------------------------------
     .awid_0(DRAM_AXI.AWID),
@@ -266,7 +293,7 @@ DWC_ddr_umctl2 u_snps_ddr_ctrl (
     .awvalid_0(DRAM_AXI.AWVALID),
     .awready_0(DRAM_AXI.AWREADY),
     .awqos_0(DRAM_AXI_AWQOS),
-    .awurgent_0(1'b0),
+    .awurgent_0(1'b1),
     .awpoison_0(1'b0),
     .awpoison_intr_0(),
     .awregion_0(4'h0),
@@ -274,7 +301,7 @@ DWC_ddr_umctl2 u_snps_ddr_ctrl (
     .waq_pop_0(),
     .waq_push_0(),
     .waq_split_0(),
-    .awautopre_0(1'b0),
+    .awautopre_0(DRAM_AXI.AWVALID),
 // AXI Port 0 Write Data Channel
     .wdata_0(DRAM_AXI.WDATA),
     .wstrb_0(DRAM_AXI.WSTRB),
@@ -366,8 +393,8 @@ DWC_ddr_umctl2 u_snps_ddr_ctrl (
     .dfi_ras_n(dfi_ras_n),
     .dfi_reset_n(dfi_reset_n),
     .dfi_we_n(dfi_we_n),
-    .dfi_reset_n_in(1'b1),
-    .init_mr_done_in(1'b1),
+    .dfi_reset_n_in(1'b1),          // Documentation says tie to 1'b1 if PHY1 and DFI1 don't exist
+    .init_mr_done_in(1'b1),         // Documentation says tie to 1'b1 if PHY1 and DFI1 don't exist
 
     .dfi_wrdata(dfi_wrdata),
     .dfi_wrdata_en(dfi_wrdata_en),
@@ -386,7 +413,7 @@ DWC_ddr_umctl2 u_snps_ddr_ctrl (
 
     .dfi_ctrlupd_req(dfi_ctrlupd_req),
     .dfi_ctrlupd_ack(dfi_ctrlupd_ack),
-    .dfi_ctrlupd_ack2(1'b0),
+    .dfi_ctrlupd_ack2(1'b0),        // Documentation says tie off to 1'b0 if using synopsys PHY IOs
 
     .dfi_dram_clk_disable(dfi_dram_clk_disable),
 
@@ -429,8 +456,8 @@ DWC_ddr_umctl2 u_snps_ddr_ctrl (
     .scanmode(1'b0),
     .scan_resetn(ARESETn),
 
-    .pclk(PCLK),
-    .presetn(PRESETn),
+    .pclk(PCLK_gated),
+    .presetn(ddrctrl_presetn),
     .paddr(DRAM_CFG_APB_i.paddr[11:0]),
     .pwdata(DRAM_CFG_APB_i.pwdata),
     .pwrite(DRAM_CFG_APB_i.pwrite),
@@ -504,40 +531,41 @@ dram_PHY u_dram_PHY(
     .dfi0_error(),
     .dfi0_error_info(),
 
-    .dfi_wrdata_P0(dfi_wrdata[31:0]),
-    .dfi_wrdata_P1(dfi_wrdata[63:32]),
+    .dfi_wrdata_P0(dfi_wrdata[31:0]),   // Confirmed with docs
+    .dfi_wrdata_P1(dfi_wrdata[63:32]),  // Confirmed with docs
     .dfi_wrdata_P2(32'd0),
     .dfi_wrdata_P3(32'd0),
-    .dfi_wrdata_cs_n_P0({dfi_wrdata_cs[1:0],dfi_wrdata_cs[1:0]}),
-    .dfi_wrdata_cs_n_P1({dfi_wrdata_cs[3:2],dfi_wrdata_cs[3:2]}),
+    .dfi_wrdata_cs_n_P0({2'b11, dfi_wrdata_cs[1:0]}), // Not sure
+    .dfi_wrdata_cs_n_P1({2'b11, dfi_wrdata_cs[3:2]}), // Not sure
     .dfi_wrdata_cs_n_P2(4'b1111),
     .dfi_wrdata_cs_n_P3(4'b1111),
-    .dfi_wrdata_en_P0(dfi_wrdata_en[1:0]),
-    .dfi_wrdata_en_P1(dfi_wrdata_en[3:2]),
+    .dfi_wrdata_en_P0(dfi_wrdata_en[1:0]),  // Confirmed with docs
+    .dfi_wrdata_en_P1(dfi_wrdata_en[3:2]),  // Confirmed with docs
     .dfi_wrdata_en_P2(2'b00),
     .dfi_wrdata_en_P3(2'b00),
-    .dfi_wrdata_mask_P0(dfi_wrdata_mask[3:0]),
-    .dfi_wrdata_mask_P1(dfi_wrdata_mask[7:4]),
+    .dfi_wrdata_mask_P0(dfi_wrdata_mask[3:0]),  // Confirmed with docs
+    .dfi_wrdata_mask_P1(dfi_wrdata_mask[7:4]),  // Confirmed with docs
     .dfi_wrdata_mask_P2(4'b0000),
     .dfi_wrdata_mask_P3(4'b0000),
-    .dfi_rddata_W0(dfi_rddata[31:0]),
-    .dfi_rddata_W1(dfi_rddata[63:32]),
+
+    .dfi_rddata_W0(dfi_rddata[31:0]),  // Confirmed with docs
+    .dfi_rddata_W1(dfi_rddata[63:32]), // Confirmed with docs
     .dfi_rddata_W2(),
     .dfi_rddata_W3(),
-    .dfi_rddata_cs_n_P0({dfi_rddata_cs[1:0],dfi_rddata_cs[1:0]}),
-    .dfi_rddata_cs_n_P1({dfi_rddata_cs[3:2],dfi_rddata_cs[3:2]}),
+    .dfi_rddata_cs_n_P0({2'b11,dfi_rddata_cs[1:0]}),
+    .dfi_rddata_cs_n_P1({2'b11,dfi_rddata_cs[3:2]}),
     .dfi_rddata_cs_n_P2(4'b1111),
     .dfi_rddata_cs_n_P3(4'b1111),
-    .dfi_rddata_dbi_W0(dfi_rddata_dbi[3:0]),
-    .dfi_rddata_dbi_W1(dfi_rddata_dbi[7:4]),
+    .dfi_rddata_dbi_W0(dfi_rddata_dbi[3:0]),    // Confirmed with docs
+    .dfi_rddata_dbi_W1(dfi_rddata_dbi[7:4]),    // Confirmed with docs
     .dfi_rddata_dbi_W2(),
     .dfi_rddata_dbi_W3(),
-    .dfi_rddata_en_P0(dfi_rddata_en[1:0]),
-    .dfi_rddata_en_P1(dfi_rddata_en[3:2]),
+    .dfi_rddata_en_P0(dfi_rddata_en[1:0]),  // Confirmed with docs
+    .dfi_rddata_en_P1(dfi_rddata_en[3:2]),  // Confirmed with docs
     .dfi_rddata_en_P2(2'b00),
     .dfi_rddata_en_P3(2'b00),
-    .dfi_rddata_valid_W0(dfi_rddata_valid[1:0]),
-    .dfi_rddata_valid_W1(dfi_rddata_valid[3:2]),
+    .dfi_rddata_valid_W0(dfi_rddata_valid[1:0]),    // Confirmed with docs
+    .dfi_rddata_valid_W1(dfi_rddata_valid[3:2]),    // Confirmed with docs
     .dfi_rddata_valid_W2(),
     .dfi_rddata_valid_W3(),
 

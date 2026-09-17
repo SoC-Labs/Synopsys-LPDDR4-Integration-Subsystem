@@ -8,16 +8,15 @@
 // The UVM environment is created by combined_test in lpddr4_tb.sv.
 // =============================================================================
 module dpi_axi #(
-    parameter int  AXI_TIMEOUT_CYCLES = 1000000,
-    parameter bit  CONNECT_SLAVE      = 1'b1
+    parameter int  AXI_TIMEOUT_CYCLES = 1000000
 )(
     input wire ACLK,
     input wire ARESETn,
-    axi4   DRAM_AXI
+    axi4.master   DRAM_AXI
 );
 
     svt_axi_if axi_if ();
-    axi4_svt_adapter #(.CONNECT_SLAVE(CONNECT_SLAVE)) u_axi4_adapter(axi_if, DRAM_AXI);
+    axi4_svt_adapter u_axi4_adapter(axi_if, DRAM_AXI);
 
     assign axi_if.common_aclk          = ACLK;
     assign axi_if.master_if[0].aclk    = ACLK;
