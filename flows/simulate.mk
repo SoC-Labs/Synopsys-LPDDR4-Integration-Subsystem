@@ -38,12 +38,12 @@ endif
 
 
 
-compile_vcs: $(SIM_BASE_DIR) $(SIM_BUILD_DIR)
+compile_vcs: $(SIM_BUILD_DIR)
 	cd $(SIM_BUILD_DIR); vcs $(VCS_OPTIONS) -f $(TBENCH_VC) -kdb -lca +define+SVT_FSDB_ENABLE $(DEFINES_VC)  | tee compile_vcs.log
 
 $(SIMV): compile_vcs
 
-run_vcs: $(SIM_DIR) $(TEST_SO) $(SIMV)
+run_vcs: $(SIMV) $(SIM_DIR) $(TEST_SO) 
 	mkdir -p $(SIM_DIR)
 	@echo quit > $(SIM_DIR)/quit.do
 	@if [ ! -d $(SIM_DIR)/logs ] ; then \
@@ -100,5 +100,5 @@ $(PHYINIT_C): build_phyinit
 	echo } >> $(LPDDR4_PROJECT_DIR)/sw/libs/phyinit.c
 
 # Recipe to create directories
-$(SIM_BUILD_DIR) $(SIM_BASE_DIR) $(SIM_DIR) $(AXI_SIM_DIR):
+$(SIM_BUILD_DIR) $(SIM_BASE_DIR) $(SIM_DIR) $(AXI_SIM_DIR) $(FW_BUILD_DIR):
 	@mkdir -p $@

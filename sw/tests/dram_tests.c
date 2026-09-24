@@ -215,6 +215,14 @@ void something() {
     while( (tmp&7)==0){apb3_read(0x4,&tmp);}
     printf("STAT.B.operating_mode != 0\n");
 
+    // SNPS_MCTL2_DDRC->RFSHCTL3.B.dis_auto_refresh = 0;
+    // SNPS_MCTL2_DDRC->PWRCTL.B.powerdown_en = 1;
+    // SNPS_MCTL2_DDRC->PWRCTL.B.selfref_en=1;
+    // SNPS_MCTL2_DDRC->PWRCTL.B.en_dfi_dram_clk_disable=1;
+    apb3_bit_clear(0x60, 0);
+    apb3_bit_set(0x30, 1);
+    apb3_bit_set(0x30, 0);
+    apb3_bit_set(0x30, 3);
 
 
     apb3_write(0x490,1);
@@ -237,11 +245,6 @@ void something() {
     } else {
         printf("  SUCCESS: burst readback matches\n");
     }
-
-    //SNPS_MCTL2_DDRC->RFSHCTL3.B.dis_auto_refresh = 0;
-    //SNPS_MCTL2_DDRC->PWRCTL.B.powerdown_en = 0;
-    //SNPS_MCTL2_DDRC->PWRCTL.B.selfref_en=0;
-    //SNPS_MCTL2_DDRC->PWRCTL.B.en_dfi_dram_clk_disable=0;
 
     //HW64_REG(DRAM_BASE)=0xA5A5A5A5A5A5A5A5;
 
