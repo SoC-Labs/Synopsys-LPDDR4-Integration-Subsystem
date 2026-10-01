@@ -9,14 +9,14 @@ module dual_port_sram(
   output reg [63:0] dout //output data at Port A and Port B
 );
 
-  reg [6:0] bram0 [7:0]; //8*64 bit ram
-  reg [6:0] bram1 [7:0]; //8*64 bit ram
-  reg [6:0] bram2 [7:0]; //8*64 bit ram
-  reg [6:0] bram3 [7:0]; //8*64 bit ram
-  reg [6:0] bram4 [7:0]; //8*64 bit ram
-  reg [6:0] bram5 [7:0]; //8*64 bit ram
-  reg [6:0] bram6 [7:0]; //8*64 bit ram
-  reg [6:0] bram7 [7:0]; //8*64 bit ram
+  reg [7:0] bram0 [0:127]; //128 x 8-bit byte lane (128 x 64-bit RAM total)
+  reg [7:0] bram1 [0:127]; //128 x 8-bit byte lane (128 x 64-bit RAM total)
+  reg [7:0] bram2 [0:127]; //128 x 8-bit byte lane (128 x 64-bit RAM total)
+  reg [7:0] bram3 [0:127]; //128 x 8-bit byte lane (128 x 64-bit RAM total)
+  reg [7:0] bram4 [0:127]; //128 x 8-bit byte lane (128 x 64-bit RAM total)
+  reg [7:0] bram5 [0:127]; //128 x 8-bit byte lane (128 x 64-bit RAM total)
+  reg [7:0] bram6 [0:127]; //128 x 8-bit byte lane (128 x 64-bit RAM total)
+  reg [7:0] bram7 [0:127]; //128 x 8-bit byte lane (128 x 64-bit RAM total)
 
 
   always @ (posedge clk)

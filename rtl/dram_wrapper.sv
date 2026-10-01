@@ -301,7 +301,7 @@ DWC_ddr_umctl2 u_snps_ddr_ctrl (
     .waq_pop_0(),
     .waq_push_0(),
     .waq_split_0(),
-    .awautopre_0(DRAM_AXI.AWVALID),
+    .awautopre_0(1'b0),  // no forced auto-precharge; page policy is left to the controller (was AWVALID)
 // AXI Port 0 Write Data Channel
     .wdata_0(DRAM_AXI.WDATA),
     .wstrb_0(DRAM_AXI.WSTRB),
@@ -516,14 +516,23 @@ dram_PHY u_dram_PHY(
     .dfi0_address_P1(dfi_address[25:20]),
     .dfi0_address_P2(6'h0),
     .dfi0_address_P3(6'h0),
-    .dfi0_cke_P0(dfi_cke),
-    .dfi0_cke_P1(dfi_cke),
-    .dfi0_cke_P2(dfi_cke),
-    .dfi0_cke_P3(dfi_cke),
-    .dfi0_cs_P0({1'b1,dfi_cs[0]}),
-    .dfi0_cs_P1({1'b1,dfi_cs[1]}),
-    .dfi0_cs_P2(2'b11),
-    .dfi0_cs_P3(2'b11),
+    // CKE / CS: the controller drives one bit per DFI phase for our single
+    // rank (bit0 = P0, bit1 = P1); the PHY ports are per rank {rank1, rank0}.
+    // Previously the 2-bit per-phase CKE bus was fed to every phase's per-rank
+    // port (rank-1 CKE toggled with the P1 value, rank-0 CKE ignored P1 so
+    // CKE edges starting on P1 reached the DRAM one clock late), and rank-1
+    // CS was tied to 1, holding the rank-1 CS pin permanently active
+    // (LPDDR4 CS is active-high). Both confirmed on the DDR4_CS/DDR4_CKE pins
+    // in simulation. Rank 1 is now held inactive. P2/P3 are unused in 1:2
+    // mode; CKE holds the P1 value and CS stays deselected.
+    .dfi0_cke_P0({1'b0, dfi_cke[0]}),
+    .dfi0_cke_P1({1'b0, dfi_cke[1]}),
+    .dfi0_cke_P2({1'b0, dfi_cke[1]}),
+    .dfi0_cke_P3({1'b0, dfi_cke[1]}),
+    .dfi0_cs_P0({1'b0, dfi_cs[0]}),
+    .dfi0_cs_P1({1'b0, dfi_cs[1]}),
+    .dfi0_cs_P2(2'b00),
+    .dfi0_cs_P3(2'b00),
     .dfi0_lp_ack(dfi_lp_ack),
     .dfi0_lp_ctrl_req(dfi_lp_req),
     .dfi0_lp_data_req(dfi_lp_req),
