@@ -9,10 +9,11 @@ module clk_rst_ctrl (
 
 initial begin
     clk <= 1'b0;
-    rstn <= 1'b1;
+    // Reset asserted from time 0 so no logic runs with X state before reset
+    // (previously released at 0, asserted at 25 ns); released at 45 ns.
+    rstn <= 1'b0;
     #5000 clk <=1'b1;
-    #20000 rstn <= 1'b0;
-    #20000 rstn <= 1'b1;
+    #40000 rstn <= 1'b1;
 end
 
 always @(clk)
