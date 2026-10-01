@@ -49,7 +49,7 @@ run_vcs: $(SIMV) $(SIM_DIR) $(TEST_SO)
 	@if [ ! -d $(SIM_DIR)/logs ] ; then \
 	  mkdir -p $(SIM_DIR)/logs; \
 	fi
-	cd $(SIM_DIR); $(SIM_BUILD_DIR)/simv $(VCS_SIM_OPTION) -sv_lib $(TEST_SO_NO) -sv_lib $(PHYINIT_SO_NO) < quit.do | tee logs/run_$(TESTNAME).log ;
+	cd $(SIM_DIR); $(SIM_BUILD_DIR)/simv $(VCS_SIM_OPTION) $(SIM_ARGS) -sv_lib $(TEST_SO_NO) -sv_lib $(PHYINIT_SO_NO) < quit.do | tee logs/run_$(TESTNAME).log ;
 
 
 sim_vcs: $(SIM_DIR) $(TEST_SO)

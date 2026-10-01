@@ -172,9 +172,25 @@ assign DRAM_CFG_APB_i.pwrite = DRAM_CFG_APB.pwrite;
 assign DRAM_CFG_APB_i.pwdata = DRAM_CFG_APB.pwdata;
 assign DRAM_PHY_CFG_APB.prdata[31:16]=16'h0000;
 
-// tie offs
-assign dfi_rddata[95:64]=32'd0;
-assign dfi_rddata_dbi[11:8]=4'd0;
+// DFI data bus mapping, controller <-> PHY.
+// The controller is built with a sideband ECC lane, so
+// each DFI phase carries 48 bits: {fall{ECC[7:0],DQ[15:0]}, rise{ECC[7:0],DQ[15:0]}}
+// (P0 = [47:0], P1 = [95:48]), and enables/valids are 3 bits per phase
+// {ECC, lane1, lane0}. Layout confirmed on dfi_wrdata in simulation.
+// The PHY only has the 2 DQ byte lanes (32 bits per phase), so the ECC lane
+// is dropped on writes and zero-filled on reads (ECCCFG0.ecc_mode must be 0).
+wire [31:0] phy_rddata_W0, phy_rddata_W1;
+wire [3:0]  phy_rddata_dbi_W0, phy_rddata_dbi_W1;
+wire [1:0]  phy_rddata_valid_W0, phy_rddata_valid_W1;
+
+assign dfi_rddata = {8'h00, phy_rddata_W1[31:16], 8'h00, phy_rddata_W1[15:0],
+                     8'h00, phy_rddata_W0[31:16], 8'h00, phy_rddata_W0[15:0]};
+// DBI follows the per-edge data layout (not yet observed: DBI is disabled)
+assign dfi_rddata_dbi = {1'b0, phy_rddata_dbi_W1[3:2], 1'b0, phy_rddata_dbi_W1[1:0],
+                         1'b0, phy_rddata_dbi_W0[3:2], 1'b0, phy_rddata_dbi_W0[1:0]};
+// ECC lane valid mirrors lane 0 so the controller sees a complete beat
+assign dfi_rddata_valid = {phy_rddata_valid_W1[0], phy_rddata_valid_W1,
+                           phy_rddata_valid_W0[0], phy_rddata_valid_W0};
 
 wire [5:0] DRAM_CFG_APB_i_psel_mux;
 assign DRAM_CFG_APB_i.psel = |DRAM_CFG_APB_i_psel_mux;
@@ -301,7 +317,7 @@ DWC_ddr_umctl2 u_snps_ddr_ctrl (
     .waq_pop_0(),
     .waq_push_0(),
     .waq_split_0(),
-    .awautopre_0(DRAM_AXI.AWVALID),
+    .awautopre_0(1'b0),  // no forced auto-precharge; page policy is left to the controller (was AWVALID)
 // AXI Port 0 Write Data Channel
     .wdata_0(DRAM_AXI.WDATA),
     .wstrb_0(DRAM_AXI.WSTRB),
@@ -402,7 +418,7 @@ DWC_ddr_umctl2 u_snps_ddr_ctrl (
 
     .dfi_rddata(dfi_rddata),
     .dfi_rddata_en(dfi_rddata_en),
-    .dfi_rddata_valid({2'b00,dfi_rddata_valid[3:0]}),
+    .dfi_rddata_valid(dfi_rddata_valid),
     .dfi_rddata_dbi(dfi_rddata_dbi),
 
     .dfi_wrdata_cs(dfi_wrdata_cs),
@@ -516,14 +532,23 @@ dram_PHY u_dram_PHY(
     .dfi0_address_P1(dfi_address[25:20]),
     .dfi0_address_P2(6'h0),
     .dfi0_address_P3(6'h0),
-    .dfi0_cke_P0(dfi_cke),
-    .dfi0_cke_P1(dfi_cke),
-    .dfi0_cke_P2(dfi_cke),
-    .dfi0_cke_P3(dfi_cke),
-    .dfi0_cs_P0({1'b1,dfi_cs[0]}),
-    .dfi0_cs_P1({1'b1,dfi_cs[1]}),
-    .dfi0_cs_P2(2'b11),
-    .dfi0_cs_P3(2'b11),
+    // CKE / CS: the controller drives one bit per DFI phase for our single
+    // rank (bit0 = P0, bit1 = P1); the PHY ports are per rank {rank1, rank0}.
+    // Previously the 2-bit per-phase CKE bus was fed to every phase's per-rank
+    // port (rank-1 CKE toggled with the P1 value, rank-0 CKE ignored P1 so
+    // CKE edges starting on P1 reached the DRAM one clock late), and rank-1
+    // CS was tied to 1, holding the rank-1 CS pin permanently active
+    // (LPDDR4 CS is active-high). Both confirmed on the DDR4_CS/DDR4_CKE pins
+    // in simulation. Rank 1 is now held inactive. P2/P3 are unused in 1:2
+    // mode; CKE holds the P1 value and CS stays deselected.
+    .dfi0_cke_P0({1'b0, dfi_cke[0]}),
+    .dfi0_cke_P1({1'b0, dfi_cke[1]}),
+    .dfi0_cke_P2({1'b0, dfi_cke[1]}),
+    .dfi0_cke_P3({1'b0, dfi_cke[1]}),
+    .dfi0_cs_P0({1'b0, dfi_cs[0]}),
+    .dfi0_cs_P1({1'b0, dfi_cs[1]}),
+    .dfi0_cs_P2(2'b00),
+    .dfi0_cs_P3(2'b00),
     .dfi0_lp_ack(dfi_lp_ack),
     .dfi0_lp_ctrl_req(dfi_lp_req),
     .dfi0_lp_data_req(dfi_lp_req),
@@ -531,41 +556,45 @@ dram_PHY u_dram_PHY(
     .dfi0_error(),
     .dfi0_error_info(),
 
-    .dfi_wrdata_P0(dfi_wrdata[31:0]),   // Confirmed with docs
-    .dfi_wrdata_P1(dfi_wrdata[63:32]),  // Confirmed with docs
+    .dfi_wrdata_P0({dfi_wrdata[39:24], dfi_wrdata[15:0]}),  // DQ of P0 fall/rise, ECC dropped
+    .dfi_wrdata_P1({dfi_wrdata[87:72], dfi_wrdata[63:48]}),  // DQ of P1 fall/rise, ECC dropped
     .dfi_wrdata_P2(32'd0),
     .dfi_wrdata_P3(32'd0),
-    .dfi_wrdata_cs_n_P0({2'b11, dfi_wrdata_cs[1:0]}), // Not sure
-    .dfi_wrdata_cs_n_P1({2'b11, dfi_wrdata_cs[3:2]}), // Not sure
+    // wrdata/rddata cs: 3 bits per phase {ECC, lane1, lane0} like the
+    // enables (seen as 000111 / 111111 patterns in simulation); active-low,
+    // 0 during every burst. Upper 2'b11 = rank 1 not selected.
+    .dfi_wrdata_cs_n_P0({2'b11, dfi_wrdata_cs[1:0]}),
+    .dfi_wrdata_cs_n_P1({2'b11, dfi_wrdata_cs[4:3]}),  // was [3:2] (mixed P0 ECC bit into P1)
     .dfi_wrdata_cs_n_P2(4'b1111),
     .dfi_wrdata_cs_n_P3(4'b1111),
     .dfi_wrdata_en_P0(dfi_wrdata_en[1:0]),  // Confirmed with docs
-    .dfi_wrdata_en_P1(dfi_wrdata_en[3:2]),  // Confirmed with docs
+    .dfi_wrdata_en_P1(dfi_wrdata_en[4:3]),  // P1 lanes; en[2]/en[5] are ECC
     .dfi_wrdata_en_P2(2'b00),
     .dfi_wrdata_en_P3(2'b00),
-    .dfi_wrdata_mask_P0(dfi_wrdata_mask[3:0]),  // Confirmed with docs
-    .dfi_wrdata_mask_P1(dfi_wrdata_mask[7:4]),  // Confirmed with docs
+    // Mask follows the per-edge data layout (not yet observed: DM is disabled)
+    .dfi_wrdata_mask_P0({dfi_wrdata_mask[4:3],  dfi_wrdata_mask[1:0]}),
+    .dfi_wrdata_mask_P1({dfi_wrdata_mask[10:9], dfi_wrdata_mask[7:6]}),
     .dfi_wrdata_mask_P2(4'b0000),
     .dfi_wrdata_mask_P3(4'b0000),
 
-    .dfi_rddata_W0(dfi_rddata[31:0]),  // Confirmed with docs
-    .dfi_rddata_W1(dfi_rddata[63:32]), // Confirmed with docs
+    .dfi_rddata_W0(phy_rddata_W0),  // remapped into dfi_rddata above
+    .dfi_rddata_W1(phy_rddata_W1),
     .dfi_rddata_W2(),
     .dfi_rddata_W3(),
-    .dfi_rddata_cs_n_P0({2'b11,dfi_rddata_cs[1:0]}),
-    .dfi_rddata_cs_n_P1({2'b11,dfi_rddata_cs[3:2]}),
+    .dfi_rddata_cs_n_P0({2'b11, dfi_rddata_cs[1:0]}),
+    .dfi_rddata_cs_n_P1({2'b11, dfi_rddata_cs[4:3]}),  // was [3:2], same per-phase layout as rddata_en
     .dfi_rddata_cs_n_P2(4'b1111),
     .dfi_rddata_cs_n_P3(4'b1111),
-    .dfi_rddata_dbi_W0(dfi_rddata_dbi[3:0]),    // Confirmed with docs
-    .dfi_rddata_dbi_W1(dfi_rddata_dbi[7:4]),    // Confirmed with docs
+    .dfi_rddata_dbi_W0(phy_rddata_dbi_W0),
+    .dfi_rddata_dbi_W1(phy_rddata_dbi_W1),
     .dfi_rddata_dbi_W2(),
     .dfi_rddata_dbi_W3(),
     .dfi_rddata_en_P0(dfi_rddata_en[1:0]),  // Confirmed with docs
-    .dfi_rddata_en_P1(dfi_rddata_en[3:2]),  // Confirmed with docs
+    .dfi_rddata_en_P1(dfi_rddata_en[4:3]),  // P1 lanes; en[2]/en[5] are ECC
     .dfi_rddata_en_P2(2'b00),
     .dfi_rddata_en_P3(2'b00),
-    .dfi_rddata_valid_W0(dfi_rddata_valid[1:0]),    // Confirmed with docs
-    .dfi_rddata_valid_W1(dfi_rddata_valid[3:2]),    // Confirmed with docs
+    .dfi_rddata_valid_W0(phy_rddata_valid_W0),
+    .dfi_rddata_valid_W1(phy_rddata_valid_W1),
     .dfi_rddata_valid_W2(),
     .dfi_rddata_valid_W3(),
 

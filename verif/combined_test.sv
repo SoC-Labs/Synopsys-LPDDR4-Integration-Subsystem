@@ -79,8 +79,12 @@ class dpi_axi_seq extends svt_axi_master_base_sequence;
   bit          is_write;
   bit [63:0]   addr;
   bit [63:0]   wdata;
+  bit [7:0]    wstrb = 8'hFF;  // same byte strobe on every write beat
+  bit [8:0]    id    = 9'h1;   // AXI ID (different IDs may complete out of order)
+  int unsigned size_bytes = 8; // AXI transfer size per beat: 1, 2, 4 or 8 (narrow < 8)
   int unsigned burst_length;
   bit [63:0]   result;
+  bit [63:0]   rdata_beats[];  // every beat of a read burst
   bit          done;
 
   function new(string name = "dpi_axi_seq");
@@ -106,33 +110,42 @@ class dpi_axi_seq extends svt_axi_master_base_sequence;
     txn.xact_type    = is_write ? svt_axi_transaction::WRITE : svt_axi_transaction::READ;
     txn.addr         = addr;
     txn.burst_type   = svt_axi_transaction::INCR;
-    txn.burst_size   = svt_axi_transaction::BURST_SIZE_64BIT;
+    case (size_bytes)
+      1:       txn.burst_size = svt_axi_transaction::BURST_SIZE_8BIT;
+      2:       txn.burst_size = svt_axi_transaction::BURST_SIZE_16BIT;
+      4:       txn.burst_size = svt_axi_transaction::BURST_SIZE_32BIT;
+      default: txn.burst_size = svt_axi_transaction::BURST_SIZE_64BIT;
+    endcase
     txn.atomic_type  = svt_axi_transaction::NORMAL;
     txn.burst_length = burst_length;
     txn.data         = new[burst_length];
     txn.wstrb        = new[burst_length];
     foreach (txn.data[i]) begin
       txn.data[i]  = wdata + i;
-      txn.wstrb[i] = 8'hFF;
+      txn.wstrb[i] = wstrb;
     end
     if (!is_write) begin
       txn.rresp        = new[burst_length];
       txn.rready_delay = new[burst_length];
       foreach (txn.rready_delay[i])
-        txn.rready_delay[i] = i;
+        txn.rready_delay[i] = 0;  // VIP range is 0..16; '= i' broke 256-beat reads
     end
     if (is_write) begin
       txn.wvalid_delay = new[burst_length];
       foreach (txn.wvalid_delay[i])
         txn.wvalid_delay[i] = 1;
     end
-    txn.id = 'h1;
+    txn.id = id;
 
     start_item(txn);
     finish_item(txn);
     get_response(rsp);
 
     result = (rsp != null) ? rsp.data[0] : 64'hFFFF_FFFF_FFFF_FFFF;
+    if (!is_write && rsp != null) begin
+      rdata_beats = new[rsp.data.size()];
+      foreach (rsp.data[i]) rdata_beats[i] = rsp.data[i];
+    end
     $display("%0t [DPI_AXI] %s addr=0x%08x len=%0d data=0x%016x rsp=0x%016x",
              $time, is_write ? "WRITE" : "READ", addr[31:0], burst_length, wdata, result);
     done = 1;

@@ -14,6 +14,7 @@ Required external tools and paths (set in your shell before building):
 | `SYNOPSYS_LPDDR4_multiPHY_DIR` | PHY IP directory |
 | `SYNOPSYS_LPDDR4_multiPHY_LIB_DIR` | PHY library files |
 | `SYNOPSYS_PHYINIT_PATH` | PHY init software |
+| `VERDI_HOME` | Verdi install matching VCS (FSDB PLI needed by `-kdb` / `SVT_FSDB_ENABLE`) |
 
 ## Environment Setup
 

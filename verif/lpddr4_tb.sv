@@ -75,9 +75,11 @@ module lpddr4_tb();
         .DRAM_AXI(DRAM_AXI)
     );
 
+    // Memory model clock pair: previously connected swapped (ck_c <- CK_t,
+    // ck_t <- CK_c). Corrected; A/B runs showed identical results either way.
     lpddr_model memory(
-        .ck_c    (DDR_CK_t),
-        .ck_t    (DDR_CK_c),
+        .ck_t    (DDR_CK_t),
+        .ck_c    (DDR_CK_c),
         .cke     (DDR_CKE[0]),
         .cs      (DDR_CS[0]),
         .odt     (1'b0),
@@ -176,5 +178,71 @@ dfi_monitor u_dfi_monitor(
     .dfi_rddata_valid_W0(`PHY_DFI.dfi_rddata_valid_W0),
     .dfi_rddata_valid_W1(`PHY_DFI.dfi_rddata_valid_W1)
 );
+
+// ----------------------------------------------------------------------
+// DFI command counter + wait helper for the C tests (retention/self-refresh).
+// Decodes the first CA cycle of LPDDR4 commands on the controller's DFI
+// output (P0 = dfi_address[5:0]/dfi_cs[0], P1 = dfi_address[25:20]/dfi_cs[1]).
+// Kinds: 0 = ACT, 1 = REF, 2 = SRE, 3 = SRX, 4 = tRFC violations.
+//
+// tRFC check: the LPDDR4 memory model does not flag tRFC in this
+// configuration (shown by a mutation run), so ACT/REF sooner than tRFCab
+// after an all-bank REF is reported here as a UVM_ERROR.
+// ----------------------------------------------------------------------
+export "DPI-C" function sv_dfi_cmd_count;
+export "DPI-C" task sv_wait_ns;
+
+int unsigned dfi_cmd_cnt [5];
+realtime     last_ref_time = -1s;
+localparam realtime T_RFCAB = 130ns;   // 2Gb die, from the memory model config
+
+task automatic dfi_cmd_seen(input int kind, input realtime t);
+    if (kind < 0) return;
+    dfi_cmd_cnt[kind]++;
+    if ((kind == 0 || kind == 1) && (t - last_ref_time) < T_RFCAB) begin
+        dfi_cmd_cnt[4]++;
+        uvm_report_error("TRFC_CHECK", $sformatf("%s %0.2f ns after REF (tRFCab = %0.0f ns)",
+                         kind == 0 ? "ACT" : "REF", (t - last_ref_time) / 1ns, T_RFCAB / 1ns));
+    end
+    if (kind == 1) last_ref_time = t;
+endtask
+
+function automatic int dfi_cmd_kind(input logic [5:0] ca);
+    if (ca[1:0] == 2'b01)      return 0;  // ACT-1
+    if (ca[4:0] == 5'b01000)   return 1;  // REF
+    if (ca[4:0] == 5'b11000)   return 2;  // SRE
+    if (ca[4:0] == 5'b10100)   return 3;  // SRX
+    return -1;
+endfunction
+
+// P1 is one DRAM clock (half a DFI clock) after P0
+always @(posedge CLK) begin
+    if (u_dram_wrapper.dfi_cs[0] === 1'b1)
+        dfi_cmd_seen(dfi_cmd_kind(u_dram_wrapper.dfi_address[5:0]), $realtime);
+    if (u_dram_wrapper.dfi_cs[1] === 1'b1)
+        dfi_cmd_seen(dfi_cmd_kind(u_dram_wrapper.dfi_address[25:20]), $realtime + 1.25ns);
+end
+
+function int unsigned sv_dfi_cmd_count(input int unsigned kind);
+    return (kind < 5) ? dfi_cmd_cnt[kind] : 0;
+endfunction
+
+task automatic sv_wait_ns(input int unsigned ns);
+    #(ns * 1ns);
+endtask
+
+// Debug waveform: wrapper-level AXI/DFI/low-power signals, enabled with
+// +DUMP_WRAPPER. Starts late (default 920 us, override +DUMP_START_US=<n>)
+// to skip PHY training and keep the FSDB small.
+initial begin
+    int unsigned dump_start_us = 920;
+    if ($test$plusargs("DUMP_WRAPPER")) begin
+        void'($value$plusargs("DUMP_START_US=%d", dump_start_us));
+        #(dump_start_us * 1us);
+        $display("[DUMP_WRAPPER] FSDB signal dump started at %0t", $realtime);
+        $fsdbDumpvars(1, lpddr4_tb.u_dram_wrapper);
+        $fsdbDumpvars(0, lpddr4_tb.DRAM_AXI);
+    end
+end
 
 endmodule
