@@ -61,7 +61,7 @@ end
 
 always @(posedge pclk or negedge presetn) begin
     if(~presetn)
-        ddrcore_rstn <= 1'b1;
+        ddrcore_rstn <= 1'b0;     // controller core/AXI reset held asserted until firmware releases it
     else begin
         if(apb_wr_sel[2]) begin
             ddrcore_rstn <= pwdata[0];
@@ -71,7 +71,7 @@ end
 
 always @(posedge pclk or negedge presetn) begin
     if(~presetn)
-        ddrctrl_presetn <= 1'b1;
+        ddrctrl_presetn <= 1'b0;  // controller APB reset held asserted until firmware releases it
     else begin
         if(apb_wr_sel[3]) begin
             ddrctrl_presetn <= pwdata[0];
