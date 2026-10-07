@@ -1,0 +1,21 @@
+// LPDDR4 subsystem design compile list: everything needed to build
+// dram_wrapper (project RTL + Synopsys controller and PHY), with the
+// compile defines the design expects. A parent SoC needs only:
+//     -f ${LPDDR4_PROJECT_DIR}/flist/lpddr4_rtl.vc
+// Requires LPDDR4_PROJECT_DIR and the Synopsys IP directory variables
+// (see Makefile) in the environment.
+//
+// cmsdk_apb_slave_mux (Arm Corstone-101) is used by dram_wrapper but is NOT
+// listed here: the parent SoC normally compiles CMSDK already, and a second
+// copy is a duplicate-module error. Standalone builds add flist/IP/CMSDK.vc.
+
++define+LP4_STD +define+DFI_MODE1 +define+LPDDR4 +define+lpddr4_proc
++define+DWC_DDRPHY_NO_PG_PINS_MACROS +define+DWC_DDRPHY_TECH__CDCBUF__DISABLE_BEHAVIORAL_VERILOG
++define+DWC_DDRPHY_HWEMUL +define+DWC_DDRPHY_PLL_ACCURATE
++define+DWC_DDRPHY_MODEL_ASYNCMSFLOP_AS_DFF
+
+-f ${LPDDR4_PROJECT_DIR}/flist/interfaces.vc
+-f ${LPDDR4_PROJECT_DIR}/flist/dram_wrapper.vc
+-f ${LPDDR4_PROJECT_DIR}/flist/IP/Synopsys_uMCTL2.vc
+-f ${LPDDR4_PROJECT_DIR}/flist/IP/Synopsys_LPDDR4PHY.vc
+-f ${LPDDR4_PROJECT_DIR}/flist/IP/Synopsys_LPDDR4PHY_BEHAV.vc

@@ -1,8 +1,4 @@
-
-+incdir+${LPDDR4_PROJECT_DIR}/verif/models/lpddr_vip/src/sverilog/vcs
-+incdir+${LPDDR4_PROJECT_DIR}/verif/models/lpddr_vip/include/sverilog
-+incdir+${LPDDR4_PROJECT_DIR}/verif/models/lpddr_vip/src/verilog/vcs
-+incdir+${LPDDR4_PROJECT_DIR}/verif/models/lpddr_vip/include/verilog
+// Standalone LPDDR4 subsystem testbench (verif/lpddr4_tb.sv).
 +incdir+${LPDDR4_PROJECT_DIR}/verif/models/apb_driver/src/sverilog/vcs
 +incdir+${LPDDR4_PROJECT_DIR}/verif/models/apb_driver/include/sverilog
 +incdir+${LPDDR4_PROJECT_DIR}/verif/models/apb_driver/src/verilog/vcs
@@ -13,15 +9,12 @@
 +incdir+${LPDDR4_PROJECT_DIR}/verif/models/axi_driver/examples/sverilog/amba_svt/tb_axi_svt_uvm_basic_sys/env
 ${LPDDR4_PROJECT_DIR}/verif/axi4_svt_adapter.sv
 ${LPDDR4_PROJECT_DIR}/verif/lpddr4_tb.sv
-${LPDDR4_PROJECT_DIR}/verif/lpddr_model.v
+-f ${LPDDR4_PROJECT_DIR}/flist/lpddr4_mem_model.vc
 ${LPDDR4_PROJECT_DIR}/verif/combined_test.sv
 ${LPDDR4_PROJECT_DIR}/verif/dfi_monitor.sv
 ${LPDDR4_PROJECT_DIR}/verif/dpi_apb.sv
 ${LPDDR4_PROJECT_DIR}/verif/ctrl/clk_rst_ctrl.v
 ${LPDDR4_PROJECT_DIR}/verif/dpi_axi.sv
--f ${LPDDR4_PROJECT_DIR}/flist/interfaces.vc
--f ${LPDDR4_PROJECT_DIR}/flist/dram_wrapper.vc
--f ${LPDDR4_PROJECT_DIR}/flist/IP/Synopsys_uMCTL2.vc
--f ${LPDDR4_PROJECT_DIR}/flist/IP/Synopsys_LPDDR4PHY.vc
--f ${LPDDR4_PROJECT_DIR}/flist/IP/Synopsys_LPDDR4PHY_BEHAV.vc
+
+-f ${LPDDR4_PROJECT_DIR}/flist/lpddr4_rtl.vc
 -f ${LPDDR4_PROJECT_DIR}/flist/IP/CMSDK.vc
