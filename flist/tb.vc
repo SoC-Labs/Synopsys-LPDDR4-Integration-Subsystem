@@ -16,5 +16,6 @@ ${LPDDR4_PROJECT_DIR}/verif/dpi_apb.sv
 ${LPDDR4_PROJECT_DIR}/verif/ctrl/clk_rst_ctrl.v
 ${LPDDR4_PROJECT_DIR}/verif/dpi_axi.sv
 
+-f ${LPDDR4_PROJECT_DIR}/flist/interfaces.vc
 -f ${LPDDR4_PROJECT_DIR}/flist/lpddr4_rtl.vc
 -f ${LPDDR4_PROJECT_DIR}/flist/IP/CMSDK.vc
