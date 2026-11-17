@@ -45,7 +45,17 @@ module dram_wrapper #(
     inout  wire             DDR4_ALERT_N,
     inout  wire             DDR4_VREF,
     input  wire             DDR4_ZN_SENSE,
-    output wire             DDR4_ZN
+    output wire             DDR4_ZN,
+
+    // Configuration-access readiness (PCLK domain, registered sources in
+    // phy_reset_ctrl). A configuration bridge can use these to answer an
+    // error at once instead of waiting on a target that cannot respond.
+    //   CTRL_CFG_READY: controller APB out of reset and its PCLK enabled
+    //                   (reset-control register 0x0C)
+    //   PHY_CFG_READY : PHY out of reset with PwrOk set (registers 0x00, 0x04)
+    // The reset-control registers themselves (0x6000-0x601C) always answer.
+    output wire             CTRL_CFG_READY,
+    output wire             PHY_CFG_READY
 );
 
 
@@ -155,6 +165,10 @@ wire        ddr_core_rstn;
 wire        ddrctrl_presetn;
 wire        ddrctrl_aclken;
 wire        ddrctrl_pclken;
+
+assign CTRL_CFG_READY = ddrctrl_presetn & ddrctrl_pclken;
+assign PHY_CFG_READY  = ~ddr_phy_reset & ddr_phy_pwrok;
+
 wire        ACLK_gated;
 wire        PCLK_gated;
 
