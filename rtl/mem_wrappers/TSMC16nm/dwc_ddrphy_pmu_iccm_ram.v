@@ -17,21 +17,23 @@ module dwc_ddrphy_pmu_iccm_ram
                                        );
 
 
-wire [31:0] b_wem = {{8{wem[3]}}, {8{wem[2]}}, {8{wem[1]}}, {8{wem[0]}}};
+wire [31:0] b_wem = {{8{~wem[3]}}, {8{~wem[2]}}, {8{~wem[1]}}, {8{~wem[0]}}};
 
-iccm_sram u_sram(
+TS1N16FFCLLULVTA8192X32M8SWSHO u_sram(
     .Q(dout),
     .CLK(clk),
-    .CEN(~cs),
-    .GWEN(~we),
+    .CEB(~cs),
+    .WEB(~we),
     .A(addr),
     .D(din),
-    .WEN(b_wem),
-    .STOV(1'b0),
-    .EMA(3'b011),
-    .EMAW(2'b01),
-    .EMAS(1'b0),
-    .RET1N(1'b1)
+    .BWEB(b_wem),
+
+    .SLP(ls),
+    .DSLP(1'b0),
+    .SD(1'b0),
+    .PUDELAY(),
+    .RTSEL(2'b01),
+    .WTSEL(2'b00)
 );
 
 endmodule

@@ -17,6 +17,10 @@ export SYNOPSYS_LPDDR4_UMCTL2_DIR
 export SYNOPSYS_LPDDR4_multiPHY_DIR
 export SYNOPSYS_LPDDR4_multiPHY_LIB_DIR
 
+# Run simulation using ASIC memories?
+ASIC_MEMS ?= no
+export ASIC_MEMS
+
 build_vip_models:
 	mkdir -p $(LPDDR4_PROJECT_DIR)/verif/models/
 	$(DESIGNWARE_HOME)/bin/dw_vip_setup -path $(LPDDR4_PROJECT_DIR)/verif/models/lpddr_vip -e lpddr_svt/tb_lpddr4_svt_verilog_basic_sys -svlog

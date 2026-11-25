@@ -4,7 +4,13 @@ TESTNAME?=dram_tests
 SIM_BASE_DIR=$(LPDDR4_PROJECT_DIR)/sim
 SIM_BUILD_DIR=$(SIM_BASE_DIR)/build
 SIM_DIR=$(SIM_BASE_DIR)/$(TESTNAME)
-TBENCH_VC = $(LPDDR4_PROJECT_DIR)/flist/tb.vc
+# VC file based on whether running with behavioural or ASIC memories
+ifeq ($(ASIC_MEMS),yes)
+	TBENCH_VC = $(LPDDR4_PROJECT_DIR)/flist/tb_ASICMEMS.vc
+	DEFINES_VC += +define+TSMC_CM_UNIT_DELAY
+else
+	TBENCH_VC = $(LPDDR4_PROJECT_DIR)/flist/tb.vc
+endif
 SIMV = $(SIM_BUILD_DIR)/simv
 
 FW_BUILD_DIR=$(LPDDR4_PROJECT_DIR)/sw/build

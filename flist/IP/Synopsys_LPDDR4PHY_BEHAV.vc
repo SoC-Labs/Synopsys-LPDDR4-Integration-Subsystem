@@ -1,6 +1,3 @@
-${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/ctb/Latest/testbench/rtl/dwc_ddrphy_pmu_dccm_ram.v
-${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/ctb/Latest/testbench/rtl/dwc_ddrphy_pmu_iccm_ram.v
-
 +incdir+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/
 ${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphydbyte_top.v
 ${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/dbyte_ew/Latest/rtl/dwc_ddrphy_bdl.v

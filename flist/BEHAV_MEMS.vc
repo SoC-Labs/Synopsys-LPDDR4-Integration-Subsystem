@@ -1,0 +1,3 @@
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/ctb/Latest/testbench/rtl/dwc_ddrphy_pmu_dccm_ram.v
+${SYNOPSYS_LPDDR4_multiPHY_LIB_DIR}/ctb/Latest/testbench/rtl/dwc_ddrphy_pmu_iccm_ram.v
+${LPDDR4_PROJECT_DIR}/rtl/dual_port_sram.v

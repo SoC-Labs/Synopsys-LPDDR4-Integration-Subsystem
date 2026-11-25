@@ -1,0 +1,6 @@
+${LPDDR4_PROJECT_DIR}/rtl/mem_wrappers/TSMC16nm/dual_port_sram.v
+${LPDDR4_PROJECT_DIR}/rtl/mem_wrappers/TSMC16nm/dwc_ddrphy_pmu_dccm_ram.v
+${LPDDR4_PROJECT_DIR}/rtl/mem_wrappers/TSMC16nm/dwc_ddrphy_pmu_iccm_ram.v
+
+${TSMC_16_MEMS}/dpsram_64b_128_wm/tsdn16ffcllulvta128x64m4wsho_130b/VERILOG/tsdn16ffcllulvta128x64m4wsho_130b.v
+${TSMC_16_MEMS}/sram_32b_8192w_wm/ts1n16ffcllulvta8192x32m8swsho_120b/VERILOG/ts1n16ffcllulvta8192x32m8swsho_120b.v
