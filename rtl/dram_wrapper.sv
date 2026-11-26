@@ -408,7 +408,7 @@ DWC_ddr_umctl2 u_snps_ddr_ctrl (
 
     .pa_rmask(2'b00),
 
-    .pa_wmask(2'b00),
+    .pa_wmask(1'b0),
 
     .dfi_act_n(dfi_act_n),
     .dfi_address(dfi_address),

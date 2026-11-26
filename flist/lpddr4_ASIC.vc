@@ -1,0 +1,3 @@
+${LPDDR4_PROJECT_DIR}/rtl/mem_wrappers/TSMC16nm/dual_port_sram.v
+${LPDDR4_PROJECT_DIR}/rtl/mem_wrappers/TSMC16nm/dwc_ddrphy_pmu_dccm_ram.v
+${LPDDR4_PROJECT_DIR}/rtl/mem_wrappers/TSMC16nm/dwc_ddrphy_pmu_iccm_ram.v

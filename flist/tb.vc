@@ -20,3 +20,4 @@ ${LPDDR4_PROJECT_DIR}/verif/dpi_axi.sv
 -f ${LPDDR4_PROJECT_DIR}/flist/lpddr4_rtl.vc
 -f ${LPDDR4_PROJECT_DIR}/flist/IP/CMSDK.vc
 -f ${LPDDR4_PROJECT_DIR}/flist/BEHAV_MEMS.vc
+-f ${LPDDR4_PROJECT_DIR}/flist/IP/Synopsys_LPDDR4PHY_BEHAV.vc

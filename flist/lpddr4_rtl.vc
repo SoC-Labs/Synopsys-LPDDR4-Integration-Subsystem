@@ -16,7 +16,8 @@
 +define+DWC_DDRPHY_HWEMUL +define+DWC_DDRPHY_PLL_ACCURATE
 +define+DWC_DDRPHY_MODEL_ASYNCMSFLOP_AS_DFF
 
++incdir+${SYNOPSYS_LPDDR4_multiPHY_DIR}/src/
+
 -f ${LPDDR4_PROJECT_DIR}/flist/dram_wrapper.vc
 -f ${LPDDR4_PROJECT_DIR}/flist/IP/Synopsys_uMCTL2.vc
 -f ${LPDDR4_PROJECT_DIR}/flist/IP/Synopsys_LPDDR4PHY.vc
--f ${LPDDR4_PROJECT_DIR}/flist/IP/Synopsys_LPDDR4PHY_BEHAV.vc
